@@ -1,0 +1,53 @@
+{
+  "category_id": 29,
+  "category_name": "Stock Trading - Day Trading",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 7,
+  "successful_expansions": 7,
+  "total_extracted": 7,
+  "scraped_at": "2025-07-05T16:42:11.183804",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What is a day trade?",
+      "answer": "FINRA rules define a\nday trade\nas buying then selling or selling short then buying the same security on the same day. Stocks and options are both subject to day trade counts.\nAt TradeUP Securities, day trades are calculated based on the number of opening orders on that day. For example, if a client makes the following orders:\n(OPEN) Buy 15 shares of XYZ\n(OPEN) Buy 15 shares of XYZ\n(CLOSE) Sell 10 shares of XYZ\n(CLOSE) Sell 10 shares of XYZ\n(CLOSE) Sell 10 shares of XYZ\nThe client would be considered to have made 2 day trades because there are only 2 opening orders.\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 760
+    },
+    {
+      "id": 2,
+      "question": "What is a PDT (Pattern Day Trader)?",
+      "answer": "Pattern Day Trader (PDT)\nis any customer who executes four or more “day trades” within 5 business days in a margin account. Once the PDT title is triggered, you can day trade as many times as possible as long as your total account equity is $25,000 or above.\nHowever, if an account is a PDT and has under $25,000 account equity, it will be restricted to Liquidation Only until account equity is increased to $25,000 or above.\nTradeUP clients\nrestricted\nas PDT may request to have the PDT status removed as a one-time courtesy. Further instructions can be found\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 749
+    },
+    {
+      "id": 3,
+      "question": "Can I reset my PDT status?",
+      "answer": "Clients who receive the PDT notice email may request to have the PDT status removed as a one-time courtesy. Please note, PDT status removal may only be done once every 180 days.\nClients may also request a reset directly on the TradeUP app through the\nLive Account > Day Trades Left\nPlease switch the Live account from \"Lite\" to \"Pro\" on the top-right corner if you are unable to find the Day Trades Left function.\nIf you have been marked as a Pattern Day Trader and have not received an email from us, please reach out to us via live chat or email at\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 739
+    },
+    {
+      "id": 4,
+      "question": "I have not been marked as a PDT, why can’t I open positions?",
+      "answer": "You may have made 3 day trades within 5 business days. For margin accounts with less than $25,000 account equity, the account will be temporarily restricted from opening positions until the next day when “Day Trades Left” is a positive number. Please note that you are not able to request a reset in this situation, and we cannot manually remove the restriction.\nYour account may have generated a day trade call, and you did not meet the call for 5 business days. For instructions on how to meet you Day Trade Call, please click\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 717
+    },
+    {
+      "id": 5,
+      "question": "What is a day trade call?",
+      "answer": "You will receive a day trade call if you exceed your day trade buying power. You may receive a day trade call even if you do not exceed 3 day trades within 5 business days.\nDay trade buying power is calculated based on your maintenance margin excess as of the previous business day. Please note that day trade buying power will not be increased by closing positions that were opened on previous trading days.\nOnce you trigger a day trade call, you will have up to five business days to deposit funds to meet the day-trading margin call. If the day trade call is not met by the 5th business day, your account will be restricted to Liquidation Only for 90 days or until the call is met.\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 873
+    },
+    {
+      "id": 6,
+      "question": "How can I meet my day trade call?",
+      "answer": "A day trade call can only be met by depositing new funds/margin eligible securities that will release sufficient margin excess to satisfy the day trade call. Please note, you cannot meet a day trade call by liquidating existing positions. In addition, funds/securities deposited to meet the day trade call must stay in your account for at least 2 business days.\nIf the day trade call is not met by the 5th business day, your account will be restricted to Liquidation Only for 90 days (account equity >$25,000) or until the call is met (account equity <$25,000).\nDay Trading involves significant risk and is not suitable for everyone. Before engaging in day trading, carefully consider your investment objectives, experience level, and risk tolerance.",
+      "answer_length": 750
+    },
+    {
+      "id": 7,
+      "question": "Can I still operate T+0 trades when my account's net value drops to below $2,000?",
+      "answer": "Accounts with a net value below $25,000 can\noperate 3 T+0 trades in 5 consecutive trading days.\nIf an account's net value drops below $2,000, it will only function as a limited margin account, i.e. the account can still operate T+0 trades (subject to maximum 3 T+0 trades within 5 consecutive trading days), but the account cannot utilize margin funding.",
+      "answer_length": 354
+    }
+  ]
+}

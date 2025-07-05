@@ -1,0 +1,41 @@
+{
+  "category_id": 27,
+  "category_name": "Stock Trading - Cash Account",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 5,
+  "successful_expansions": 5,
+  "total_extracted": 5,
+  "scraped_at": "2025-07-05T16:30:56.061587",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What is a cash account?",
+      "answer": "Cash accounts\nfollow the T+1 settlement rule, which means once securities are sold, it takes one business day for the sale proceeds to be settled. You are able to open new positions with unsettled funds, however, if the security is sold prior to the fund’s settlement, the\nGood Faith Violation (GFV)\nwill be triggered, which will only allow you to open positions with settled funds for the next 90 days.",
+      "answer_length": 403
+    },
+    {
+      "id": 2,
+      "question": "What are settled and unsettled funds?",
+      "answer": "If you have a cash account, settled funds refer to two types of funds: 1. Newly deposited funds; 2. Funds settled from your sale transactions.\nUnsettled funds may be used to open new positions but closing positions with unsettled funds may result in\nGood Faith Violation (GFV)\nUnsettled funds refer to proceeds from the sale of fully paid for settled securities prior to settlement date.\nFor example:\nOn Jan 1, you deposited $1,000 via wire transfer, and purchased 10 shares of ABC stock at $100/share.\nOn the same day, you sold all 10 shares of ABC at $120/share and received $1,200 total sale proceeds. Then the sale proceeds of $1,200 will be settled on Jan 2. Prior to Jan 2, these $1,200 would be considered as “unsettled funds”.\nPlease note, all dates mentioned above or included are assumed to be trading days.",
+      "answer_length": 817
+    },
+    {
+      "id": 3,
+      "question": "Where do I check my account type?",
+      "answer": "Once you log into your TradeUP App, you can check it under\nProfile > TradeUP Account > Live Account.",
+      "answer_length": 100
+    },
+    {
+      "id": 4,
+      "question": "Can I day trade in a cash account?",
+      "answer": "You can day trade with your settled funds in a cash account. However, due to the T+1 settlement rule in the cash account, frequent day trades in a cash account may trigger a\nGood Faith Violation (GFV)\n, which will result in you only opening the positions when funds are all settled.\nPlease click\nto learn more about Good Faith Violation(s).",
+      "answer_length": 340
+    },
+    {
+      "id": 5,
+      "question": "What is a Good Faith Violation (GFV)?",
+      "answer": "In a cash account, an investor must pay for the purchase of a security (meaning, the trade must settle) prior to selling that security. If an investor buys a security and then sells that same security without paying for the security in full by settlement date, the trade is considered a Good Faith Violation (GFV).\nAn example that would be considered a violation:\nA Cash account has a current cash balance of $10,000.\nOn Trade Date, the account buys $10,000 worth of stock in symbol \"ABC\" and then sells the same $10,000 worth of \"ABC\" on the same day\nThe account then subsequently buys $10,000 worth of stock in symbol \"XYZ\" using the funds received from \"ABC\"\nWhile there is no issue with the purchase of \"XYZ\", if the account sends a subsequent order to sell \"XYZ\" on the same day, this would be a GFV violation because the funds used to complete the initial purchase of \"XYZ\" have not yet settled.\nThe end of day surveillance process would consider both of these scenarios to be GFVs. Accounts that commit 3 GFVs within 12 months will be restricted for 90 days, during which time the account can only purchase securities using settled funds.",
+      "answer_length": 1145
+    }
+  ]
+}

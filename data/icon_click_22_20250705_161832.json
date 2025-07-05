@@ -1,0 +1,65 @@
+{
+  "category_id": 22,
+  "category_name": "New Accounts",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 9,
+  "successful_expansions": 9,
+  "total_extracted": 9,
+  "scraped_at": "2025-07-05T16:18:32.994289",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What do I need to open an account?",
+      "answer": "We offer individual brokerage accounts for a variety of clients, including:\nU.S. Persons\n: Individuals who are U.S. citizens or residents and meet the identification and documentation requirements. Applicants need to be at least 18 years old, have a valid Social Security number (not a Taxpayer Identification Number), and proof of U.S. residential address (such as a utility bill or bank statement).\nn-U.S. Persons\n: Individuals who reside outside the U.S. and meet applicable regulatory, tax, and documentation requirements. Applicants need to be at least 18 years old and must provide a copy of Government-issued photo identification in the initial onboarding.\nPlease note that additional information may be required during the account review process, such as a copy of photo ID, Proof of Address, or Tax ID proof.\nAs of June 12, 2025, to comply with the latest regulatory guidelines, we are currently upgrading account opening access for Mainland Chinese and Taiwanese users. During this period, these users will be temporarily unable to open TradeUP accounts.\nWelcome to TradeUP!",
+      "answer_length": 1084
+    },
+    {
+      "id": 2,
+      "question": "How long does it take for the account to get approved?",
+      "answer": "Once the application is successfully submitted, it normally takes about 1-2 business days for the new account team to review and approve your account.\nIf additional information is needed, you will receive an email notification from TradeUP requesting further response. You may upload the required documents (Photo ID or Proof of address) directly through the TradeUP platform.\nPlease closely monitor your email inbox (including your Spam/Junk folder) to ensure you don’t miss any communication.\nWe surely appreciate your patience!",
+      "answer_length": 530
+    },
+    {
+      "id": 3,
+      "question": "What type of account can I open with TradeUP?",
+      "answer": "You can open a regular brokerage account with TradeUP, which can be either a\nMargin\naccount. Each applicant is limited to one account only.\nNOTE: We do not charge any account maintenance fees, nor do we charge any monthly or annual fees. Brokerage services in TradeUP are offered by TradeUP Securities Inc. TradeUP Securities Inc. is a registered brokerage firm at SEC (CRD: 18483; SEC: 8-36754), a member of FINRA/SIPC and a member of DTCC/NSCC, regulated by the US Securities and Exchange Commission and Financial Industry Regulatory Authority.",
+      "answer_length": 546
+    },
+    {
+      "id": 4,
+      "question": "Where can I access TradeUP’s newsletters and blogs?",
+      "answer": "You may view our weekly newsletters and blogs here:\nTradeUP Blog",
+      "answer_length": 64
+    },
+    {
+      "id": 5,
+      "question": "What is a Trusted Contact Person?",
+      "answer": "On February 5, 2018, FINRA enacted a new rule to help protect investors from financial exploitation and fraud. This rule requires all brokerage firms to ask their retail customers to provide the name and contact information for a “trusted contact person” the firm may contact in the event of possible financial exploitation or fraud.\ntrusted contact person\n” is a person that you authorize your brokerage firm to contact if your broker has a reasonable belief that your account may be exposed to possible financial exploitation or fraud. A trusted contact person must be age 18 or older.\nFor more information, please see:\nhttps://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-30",
+      "answer_length": 738
+    },
+    {
+      "id": 6,
+      "question": "How do I cancel my TradeUP Registration?",
+      "answer": "We’re sorry to see you leave. If you have made the decision to\ncancel\nyour registration with TradeUP, here are some tips we would like to share with you to ensure your cancellation request will be processed smoothly.\nIf you don’t currently have a Live Account with us, please do not open one while we are processing your cancellation request.\nIf you already opened a brokerage account with TradeUP, please head to\nHow do I close my TradeUP Securities account?\nto close it beforehand.\nYou are more than welcome to join us again! If you decide to not continue with your cancellation, click “Cancel My Request” before it is processed. Should you have any difficulties, please feel free to contact our customer service at\nYou will be notified of any updates via email. Once your TradeUP registration is canceled, the profile, watchlist, stock alerts, etc. that you set up previously will all be deleted, and will not be retrieved even if you reactivate your account in the future.\nWe wish you the best in your investment journey and look forward to serving you as our valued customer again!\nto cancel your TradeUP registration.",
+      "answer_length": 1123
+    },
+    {
+      "id": 7,
+      "question": "How do I update my account information?",
+      "answer": "You can update the following account information yourself:\n-         Personal information (first and last name, SSN, marital status, # of dependents)\n-         Address (residential and mailing)\n-         Employment status\n-         Professional/non-professional questionnaire\n-         Regulatory information\n-         Financials (net worth, income, investment experience)\n-         Investment objectives\nTo update this information, please follow these steps:\n1.     Go to [Portfolio] and select\n(Pro Version)\n(Lite Version)\n2.     Select\nAccount Settings\n3.     Select the category of information you would like to update.\nYour changes are subject to compliance review and will be approved in 1-2 business days if supporting documents (when required) are sufficient.",
+      "answer_length": 767
+    },
+    {
+      "id": 8,
+      "question": "Where do I see all account agreements and disclosures?",
+      "answer": "Brokerage services via TradeUP has been provided by TradeUP Securities, Inc. Please click the link down below to see the Agreements & Disclosures:\nhttps://marsco.com/form-center",
+      "answer_length": 177
+    },
+    {
+      "id": 9,
+      "question": "How do I close my TradeUP Securities account?",
+      "answer": "We're very sorry to hear that you're leaving. Before we can process your account closure request, here are a few tips we would like to share with you:\nPrior to submitting your account closure request:\nPlease make sure you have either withdrawn or transferred all funds from your account.\nPlease do not make any more deposits to your account.\nOnce the request has been submitted successfully, your account will be processed to close within 7 business days.\nAccount Statements:\nYou will still be able to retrieve your account statements, trade confirmations, and tax documents through your app or by requesting them from our customer service team after your account is closed.\nRecordkeeping Requirements:\nPer regulatory requirements, we will preserve certain records after the account is closed. All your account information and data will be securely guarded with us solely to fulfill this requirement.\nto close your account.",
+      "answer_length": 923
+    }
+  ]
+}

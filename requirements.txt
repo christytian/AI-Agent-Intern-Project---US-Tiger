@@ -1,21 +1,21 @@
 # Core LangChain dependencies
-langchain==0.1.0
-langchain-community==0.0.13
-langchain-openai==0.0.5
-langchain-core==0.1.12
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-openai>=0.1.0
+langchain-core>=0.2.0
 
 # Vector databases
-chromadb==0.4.22
-sentence-transformers==2.2.2
-openai==1.6.1
+chromadb>=0.4.24
+sentence-transformers>=3.0.0
+openai>=1.30.0
 
 # Web scraping
-beautifulsoup4==4.12.2
-requests==2.31.0
-selenium==4.16.0
-webdriver-manager==4.0.1
-lxml==4.9.3
+beautifulsoup4>=4.12.2
+requests>=2.31.0
+selenium>=4.16.0
+webdriver-manager>=4.0.1
+lxml>=4.9.3
 
 # Utilities
-python-dotenv==1.0.0
-tqdm==4.66.1
+python-dotenv>=1.0.0
+tqdm>=4.66.1

@@ -1,0 +1,107 @@
+{
+  "category_id": 30,
+  "category_name": "Option Trading",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 16,
+  "successful_expansions": 16,
+  "total_extracted": 16,
+  "scraped_at": "2025-07-05T16:44:49.656052",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "How do I trade options?",
+      "answer": "To trade options, click\nTrade > Options\non the stock page you are interested in.\nYou will then see the options contracts available for the stock you are interested in. You can swipe through the dates at the top of the screen in order to choose the expiration date of the contract you would like to purchase.\nIf you click on the contract, you will be shown the below screen with the essential statistics on the contract. To trade the contract click one of the buttons at the bottom of the screen.\nThe symbols mentioned above are for demonstration only, and shall not be considered a recommendation or solicitation for the purchase or sale of securities, futures, or other investment products.",
+      "answer_length": 691
+    },
+    {
+      "id": 2,
+      "question": "What are the requirements to trade options?",
+      "answer": "Currently, only margin accounts can trade options. If you only have a cash account, you can upgrade to a margin account in order to gain option trading capabilities.\nPlease be aware that a margin account must have a minimum $2,000 account balance (not including option positions) to place an options trade.\nFor example, if your account has $1,500 in cash and $1,000 in existing option contracts, you would\nbe able to place another option order because your account balance excluding option positions is under $2,000.",
+      "answer_length": 516
+    },
+    {
+      "id": 3,
+      "question": "Can I use margin to purchase option contracts?",
+      "answer": "Options are not marginable so you will not be able to use margin buying power to purchase option contracts.",
+      "answer_length": 107
+    },
+    {
+      "id": 4,
+      "question": "What are the options trading commissions?",
+      "answer": "At TradeUP Securities, we do not charge commissions for you to trade options. Other regulatory fees may apply. Please see our pricing page for more information:\nhttps://www.tradeup.com/pricing/commissions-us",
+      "answer_length": 207
+    },
+    {
+      "id": 5,
+      "question": "When will the options trade settle?",
+      "answer": "The settlement period for option transactions is T+1, which means it takes 1 business day for the trade to be settled.\nFor example, if you sell 2 contracts on Monday, the funds will be settled on Tuesday. (Provided both Monday and Tuesday are trading days.)",
+      "answer_length": 257
+    },
+    {
+      "id": 6,
+      "question": "What options can be traded at TradeUP Securities?",
+      "answer": "TradeUP supports U.S. equity and index options. The following option strategies can be traded at each level:\nLooking to upgrade your option level trading permissions? Click\nfor more information!",
+      "answer_length": 194
+    },
+    {
+      "id": 7,
+      "question": "What will happen to my contract on the expiration day?",
+      "answer": "If the option contract is In-the-Money, we will examine your account and see if your account assets meet the contract obligation for either exercise or assignment. If so, the contract will be exercised or assigned after market closes. If not, we will force liquidate your positions for risk mitigation purposes.\nIf the option contract is Out-of-the-Money, the contract will expire worthless.\nPlease note: if you are selling a contract, you are always at the risk of being assigned. For risk control purposes, if you do not have sufficient assets to cover your upcoming exercise or assignment obligation, your option position might be force closed prior to market close on the expiration date.\nIf you are an option owner/buyer and holding an In-the-Money position on the expiration date, and decide not to exercise your option, please make sure to email:\nto notify us no later than 5:00 P.M. EST of the expiration date.",
+      "answer_length": 918
+    },
+    {
+      "id": 8,
+      "question": "What are call options and put options?",
+      "answer": "Call options\nallow the holder to buy the asset at a stated price within a specific timeframe.\nPut options\nallow the holder to sell the asset at a stated price within a specific timeframe.",
+      "answer_length": 187
+    },
+    {
+      "id": 9,
+      "question": "What is the strike or exercise price?",
+      "answer": "Each option contract will have a specific expiration date by which the holder must exercise their option. The stated price on an option is known as the\nstrike price\nexercise price.\nIf you bought a call option, your call will be profitable if the market price of the stock goes above the strike price, since you can buy the stock at a price that is lower than the current market price. However, if the value of the stock stays below your strike price, your options contract will expire worthless.\nPlease note: You are not actually buying shares of the stock unless you exercise your contract. You are buying a contract that grants you rights to purchase stocks at a specific price on or before a certain date.",
+      "answer_length": 708
+    },
+    {
+      "id": 10,
+      "question": "Are there any extra charges associated with option exercise and assignment?",
+      "answer": "At TradeUP Securities, we do not charge any extra fees for option exercise and assignment.",
+      "answer_length": 90
+    },
+    {
+      "id": 11,
+      "question": "How can I upgrade my Option Trading Level?",
+      "answer": "Clients with existing Option trading permissions may request to upgrade their Option Trading Level to gain access to different option strategies.\nTo upgrade your Options Trading Level, go to\nPortfolio > More > Opt. Trading Level.\nPlease switch the Live account from \"Lite\" to \"Pro\" on the top-right corner if you are unable to find the Opt. Trading Level function.\nte: clients must have a minimum account balance to be able to request an upgrade on Option Trading Levels:\nLevel 3 (Proficient) = $10,000.00 minimum (not including option positions)\nLevel 4 (Advanced) = $25,000.00 minimum (not including option positions)",
+      "answer_length": 619
+    },
+    {
+      "id": 12,
+      "question": "What are Index Options?",
+      "answer": "An Index option is an option contract that gives an investor the right to buy or sell the value of an underlying index at an exercise or strike price.\nAs opposed to equity options, Index options are cash settlement only. Investors will receive cash based on the difference between the exercised settlement value and the strike price rather than the delivery of underlying equity.\nstock is being transferred, bought, or sold.\nWhat are the fees associated with trading Index Options?\nTradeUP currently does not charge any commission or fees for Index Options!\nOrder Types for trading Index Options\nAt TradeUP, currently only limit orders can be placed to trade Index Options.\nTradeUP Index Option Hour Trading Hours:\nRegular trading hours 9:30am - 4:00pm EST.\nExceptions: Index options NDX and NDXP trades from 9:30AM - 4:15pm EST.\nExamples of Trading Index Options:\nCash Settled Call: If client purchases 50 XYZ cash-settled call index option and the reported exercise settlement value is $55.\nThe cash settlement value of the call option is $500. [(55-50) x 100 = $500].\nCash Settled Put: If client purchases 50 XYZ cash-settled put index option and the reported exercise settlement value of the put is $40.\nThe cash settlement value of the put option is $1,000 [(50-40) x 100 = $1,000].\nIndex Option Settlement:\nIndex options traded at TradeUP are all European Style Options.\nEuropean Style Options are options that can only be exercised on the designated expiration date.\nA.M. Settlement - index options with A.M Settlement establishes their exercise settlement value 30 minutes after market opens on day of expiration.\nAM Settled index options stop trading the day before expiration date.\nPM Settlement - index options with PM Settlement establishes their exercise settlement value at market close on day of expiration.\nPM Settled index options allow for trading of day of expiration up until market close.\nIf expiration date is non-trading day, it will be advanced to the previous trading day.\nException is the non trading day is on Monday, then it will be postponed to the next Trading Day.\nWhat Types of Index Options are Currently Supported at TradeUP?\nSPX - S&P 500 Index Options\nSPXW - S&P 500 Index Weekly Options\nDJX - Dow Jones Index Options\nNDX - NASDAQ 100 Index Options\nNDXP - NASDAQ 100 Index Weekly Options\nVIX - CBOE Volatility Index Options\nVIXW - CBOE Volatility Index Weekly Options\nXSP - Mini Standard & Poor's 500 Index Options\nNANOS - NANOS Standard & Poor's 500 Index Options\nto see each Index Option's settlement and Expiration Date",
+      "answer_length": 2558
+    },
+    {
+      "id": 13,
+      "question": "What type of Index Options are currently supported at TradeUP Securities?",
+      "answer": "TradeUP currently supports the trading of the follow Index Options.\nfor more information on Index Options, its Fees, Trading Hours, and more.",
+      "answer_length": 141
+    },
+    {
+      "id": 14,
+      "question": "Can you explain each multi-leg option strategy?",
+      "answer": "You can find an explanation of the supported multi-leg option strategies below:",
+      "answer_length": 79
+    },
+    {
+      "id": 15,
+      "question": "How do I place a multi-leg options order?",
+      "answer": "To place a multi-leg options order, select a stock or index and go to the\nOptions\ntab. Select from the list of options strategies to place a multi-leg order.",
+      "answer_length": 157
+    },
+    {
+      "id": 16,
+      "question": "How are my position value and P&L calculated?",
+      "answer": "The market value, position profit/loss, and real-time risk control of options are uniformly calculated using the\nMark Price\n. The daily profit/loss of options is calculated using the\nMark Price\nand the\nPrevious Mark Price (Pre-mark)\nGeneral Rules for determining the Mark Price\nWhen the last price lies between the best bid and best ask, the Mark Price is equal to the last price.\nWhen the last price is not between the best bid and best ask or does not exist, the Mark Price is set to the mid-price (for single-leg option, mid-price generally equals to the average of the best bid and the best ask).\nIf the ask price does not exist and the last price is lower than the best bid, the Mark Price is set to the best bid.\nIf the ask price does not exist and the last price is higher than the best bid, the Mark Price is set to the last price.\nIf the bid price does not exist and the last price is lower than the best ask, the Mark Price is set to the last price.\nIf the bid price does not exist and the last price is higher than the best ask, the Mark Price is set to the best ask.",
+      "answer_length": 1078
+    }
+  ]
+}

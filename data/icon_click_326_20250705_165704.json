@@ -1,0 +1,59 @@
+{
+  "category_id": 326,
+  "category_name": "Individual Retirement Account (IRA)",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 8,
+  "successful_expansions": 8,
+  "total_extracted": 8,
+  "scraped_at": "2025-07-05T16:57:04.034252",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What is an Individual Retirement Account (IRA)?",
+      "answer": "An Individual Retirement Account (IRA) is a type of retirement savings account in the United States that can offer a range of tax benefits and investment options.\nTradeUP offers three individual retirement options: Traditional IRAs, Roth IRAs, and Rollover IRAs. Each has unique traits to consider when setting up your retirement savings plan.\nTraditional IRA\nContributions may be tax-deductible.\nEarnings grow tax-deferred until withdrawal.\nWithdrawals during retirement are generally taxed as ordinary income.\nRoth IRA\nContributions are made with after-tax dollars (nondeductible).\nEarnings grow tax-free, and qualified withdrawals during retirement are generally tax-free as well (subject to certain requirements).\nMust meet income eligibility requirements.\nRollover IRA\nA Rollover IRA is a Traditional IRA specifically set up to receive (or “roll over”) eligible retirement funds from an employer-sponsored plan (such as a 401(k), 403(b), 457, TSP), or another IRA.\nFunds can continue to grow, tax-advantaged, after rolling over.\nAllows for tax and penalty-free consolidation of all of your retirement savings.\nWho can open an IRA account?\nMost individuals under the age of 70½ (for Traditional IRAs), or with earned income (for Roth IRAs) can open an IRA. Specific eligibility rules and income limits may vary by IRA type.\nFor more details on these IRA options, see the table below.\nDisclosure: This is not intended as investment or tax advice.",
+      "answer_length": 1449
+    },
+    {
+      "id": 2,
+      "question": "What are the tax advantages of opening an IRA?",
+      "answer": "Each IRA type has different tax advantages:\nTraditional IRA\nContributions may be tax-deductible, reducing your current taxable income.\nEarnings grow tax-deferred, meaning you don’t pay taxes until withdrawal.\nRoth IRA\nContributions are not tax-deductible, but earnings grow tax-free.\nQualified distributions are also tax-free\nRollover IRA\nMaintains the tax-deferred status of your retirement assets when moving from another plan.\nDisclosure: This is not intended as investment or tax advice.",
+      "answer_length": 491
+    },
+    {
+      "id": 3,
+      "question": "What is my Modified Adjusted Gross Income    (MAGI)?",
+      "answer": "Modified Adjusted Gross Income (MAGI)\nis your adjusted gross income (AGI) with certain deductions or exclusions added back in. Your AGI is found on your federal tax return (Form 1040). The IRS uses MAGI to determine eligibility for Roth IRA contributions and tax deductibility for Traditional IRAs.\nTo calculate your MAGI, please consult a tax professional or refer to\nIRS Publication 590\nfor more details.\nDisclosure: This is not intended as investment or tax advice.",
+      "answer_length": 468
+    },
+    {
+      "id": 4,
+      "question": "What do I need to open an IRA account?",
+      "answer": "Applicants need to be U.S. citizens, legal permanent residents (Green card holders), or resident aliens and need earned income to contribute. Specific rules apply for each type (e.g., income limits for Roth IRA).\nApplicants need to have:\nA valid Social Security number\n(not a Taxpayer Identification Number)\nProof of U.S. residential address\n(such as a utility bill or bank statement)\nYou do not need to provide any documentation during the initial online application process. However, please note that additional information may be required during the account review process, such as a copy of your SSN card or your photo ID (Passport or Driver’s License).\nWelcome to TradeUP!",
+      "answer_length": 677
+    },
+    {
+      "id": 5,
+      "question": "What do I do if I already have an IRA elsewhere?",
+      "answer": "If you already have an IRA at another institution, you can:\nRollover\nthe IRA into a TradeUP Rollover IRA. Rollovers are reportable events, but non-taxable.\nTransfer\nyour existing IRA assets into a TradeUP IRA of the same type (trustee-to-trustee transfer). Transfers are non-reportable events.\nWe recommend contacting your current IRA provider for their transfer-out procedures. Then, you can initiate a transfer form on TradeUP to seamlessly move your assets.\nIRS Rollover Chart\n(hyperlink to IRS) displays what type of IRAs are eligible to rollover or for transfers.\nWelcome to TradeUP!",
+      "answer_length": 588
+    },
+    {
+      "id": 6,
+      "question": "How much can I contribute to my IRA each year?",
+      "answer": "The IRS sets annual contribution limits for IRAs. For tax years 2024 – 2025, you may contribute up to $7,000 if you’re under age 50. If you are 50 or older, you may contribute up to $8,000. These limits are subject to changes annually.\nHow do I make a contribution to my account?\nOnce your IRA is open, you can deposit funds via ACH, wire transfer, or other supported deposit methods. Please see our current “\nHow do I deposit into my account?\n” FAQ for step-by-step instructions.",
+      "answer_length": 480
+    },
+    {
+      "id": 7,
+      "question": "What are the IRA withdrawal/distribution restrictions?",
+      "answer": "Traditional/Rollover IRA\nGenerally, you cannot withdraw funds without penalty before age 59½ (exceptions apply)\nAfter age 59½, withdrawals are penalty-free but taxed as ordinary income.\nYou must begin taking withdrawals, or Required Minimum Distributions (RMDs), at age 73.\nRoth IRA\nQualified withdrawals after age 59½ (and at least 5 years after your first Roth contribution) are tax-free.\nEarly withdrawals of earnings may incur taxes and penalties.\nWhat is a Required Minimum Distribution (RMD)?\nFor Traditional IRAs (and Rollover IRAs), you must start taking distributions by a certain age (73 for individuals turning 73 in 2023 or later, though rules vary).\nRoth IRAs do\nhave RMDs during the owner’s lifetime.\nHow can I make a distribution from my IRA?\nYou can initiate a distribution in your account portal or by contacting Customer Support.\nDepending on your age and IRA type, taxes or penalties may apply.\nCan I make an early withdrawal from my account?\n, but you may be subject to a 10% early withdrawal penalty plus any applicable taxes unless you qualify for an exception.\nPlease consult a tax professional or refer to IRS Publication 590 for more details.",
+      "answer_length": 1167
+    },
+    {
+      "id": 8,
+      "question": "How do I close my IRA account?",
+      "answer": "We're very sorry to hear that you're leaving. Before we can process your account closure request, here are a few tips we would like to share with you:\nPrior to submitting your account closure request:\nYou’ll need to request a full distribution or a transfer to another IRA provider.\nPlease do not make any more deposits or IRA transfer to your account.\nOnce the request has been submitted successfully, your account will be processed to close within 7 business days.\nAccount Statements:\nYou will still be able to retrieve your account statements, trade confirmations, and tax documents through your app or by requesting them from our customer service team after your account is closed.\nRecordkeeping Requirements:\nPer regulatory requirements, we will preserve certain records after the account is closed. All your account information and data will be securely guarded with us solely to fulfill this requirement.\nto close your account.\nLooking forward to seeing you again!",
+      "answer_length": 971
+    }
+  ]
+}

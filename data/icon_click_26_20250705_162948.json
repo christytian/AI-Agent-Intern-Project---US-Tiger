@@ -1,0 +1,35 @@
+{
+  "category_id": 26,
+  "category_name": "Stock Trading - Extended Hours",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 4,
+  "successful_expansions": 4,
+  "total_extracted": 4,
+  "scraped_at": "2025-07-05T16:29:48.746046",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "Does TradeUP allow me to trade pre or after regular market hours?",
+      "answer": ", you will be able to trade during extended hours with TradeUP. You can trade during pre-market from 4:00a.m. to 9:30a.m. and after-market from 4:00p.m.- 8:00p.m. EST.\nPlease see:\nExtended Hours Trading Risk Disclosure",
+      "answer_length": 218
+    },
+    {
+      "id": 2,
+      "question": "How do I place orders during extended hours?",
+      "answer": "To place an order for extended hours, please change your order type to “Limit” on your order ticket, then click \"Allow\" for\nFill outside RTH\nThe symbols mentioned above are for demonstration only, and shall not be considered a recommendation or solicitation for the purchase or sale of securities, futures, or other investment products.",
+      "answer_length": 336
+    },
+    {
+      "id": 3,
+      "question": "What type of orders are supported during extended hours?",
+      "answer": "To trade during extended hours, only the “\n” order type is available.",
+      "answer_length": 69
+    },
+    {
+      "id": 4,
+      "question": "What is TradeUP's 24-Hour Trading?",
+      "answer": "TradeUP clients can now trade a variety of stocks and ETFs outside of traditional market hours\n(Monday - Friday 9:30am to 4:00pm EST excluding holidays)\nwith TradeUP's 24-Hour Trading!\nExtended Trading hours range from 4:00am - 9:30am, 4:00pm - 8:00pm EST (Monday - Fridays, holidays excluded)\nFor more information on TradeUP's Extended Trading Hours, please\nclick here\nOvernight Trading hours range from 8:00pm - 4:00am EST (Sunday - Thursdays)\nOverview of TradeUP's 24-Hour Trading:\nPre-Market hours\n: Monday - Friday 4:00am - 9:30am EST\nMarket hours\n: Monday - Friday 9:30am - 4:00pm EST\nPost-Market hours:\nMonday - Friday 4:00pm - 8:00pm EST\nOvernight Market hours\n: Sunday - Thursday 8:00pm - 4:00am EST\nHow to Place an Order during Overnight Hours:\nEligible Securities\n- securities eligible for overnight session has small icon '24' indicating overnight trading on Detailed Quotes page\nTrading Hours\n> select\nOvernight Trading.\nOvernight orders must be placed during overnight session. Only limit orders are accepted during Overnight Trading. Overnight orders expire automatically at the end of overnight session.\nShort selling is prohibited during Overnight Trading.\nThe symbols mentioned above are for demonstration only, and shall not be considered a recommendation or solicitation for the purchase or sale of securities, futures, or other investment products.\nWhat are the fees associated with Overnight Trading?\nThere are no additional fees or costs associated with Overnight Trading with TradeUP!\nTrading during Extended Hours and Overnight Sessions involves certain risks such as but not limited to, lower liquidity, higher volatility, wider spreads and less market visibility, and may not be appropriate for all investors.",
+      "answer_length": 1736
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "category_id": 211,
+  "category_name": "Stock Trading - OTC",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 4,
+  "successful_expansions": 4,
+  "total_extracted": 4,
+  "scraped_at": "2025-07-05T16:50:32.656733",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What are OTC (Over-the-Counter) stocks?",
+      "answer": "OTC stocks, also known as over-the-counter stocks, are shares of companies that are not listed on major stock exchanges like NYSE or NASDAQ. Instead, they are traded through a decentralized network of dealers and/or market makers.\nOTC stocks are typically associated with smaller companies or companies that do not meet the listing requirements of larger exchanges, offering investors an opportunity to invest in potentially high-growth or niche companies.",
+      "answer_length": 456
+    },
+    {
+      "id": 2,
+      "question": "What is the Pink Market (“Pink Sheets”)?",
+      "answer": "The Pink Market is also known as the Open Market. The companies listed on the Pink Sheets typically include smaller or less-established companies that may not meet the financial or regulatory requirements for listing on a major exchange. The Pink Sheets do not impose listing standards or reporting obligations, which can result in reduced transparency and increased risk.",
+      "answer_length": 372
+    },
+    {
+      "id": 3,
+      "question": "How do I get OTC trading permission?",
+      "answer": "To apply for OTC trading permissions, please open the ticker symbol and click\nt all TradeUP clients may be eligible for OTC trading permissions due to the higher risk associated with this type of investment.",
+      "answer_length": 207
+    },
+    {
+      "id": 4,
+      "question": "What OTC stocks are available for trading on the TradeUP platform?",
+      "answer": "TradeUP is pleased to offer trading of OTC stocks from the OTCQX, OTCQB, and Pink Market.\nIf you have any questions regarding a specific stock, please contact Customer Support at\nor reach out to us on !",
+      "answer_length": 202
+    }
+  ]
+}

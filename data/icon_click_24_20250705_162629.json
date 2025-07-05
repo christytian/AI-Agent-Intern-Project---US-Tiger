@@ -1,0 +1,41 @@
+{
+  "category_id": 24,
+  "category_name": "Stock Trading - General",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 5,
+  "successful_expansions": 5,
+  "total_extracted": 5,
+  "scraped_at": "2025-07-05T16:26:29.050284",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What does it mean to invest in a stock?",
+      "answer": "When you invest in stocks, you buy ownership shares in a company (also known as equity shares). Your return on investment, or what you get back in relation to what you put in, depends on the success or failure of that company. If the company does well and makes money from the products or services it sells, you expect to benefit from that success.",
+      "answer_length": 348
+    },
+    {
+      "id": 2,
+      "question": "How do I make money investing in stocks?",
+      "answer": "There are two main ways to make money with stocks:\nDividends. When publicly owned companies are profitable, they can choose to distribute some of those earnings to shareholders by paying a dividend. You can either take the dividends in cash or reinvest them to purchase more shares in the company. Many retired investors focus on stocks that generate regular dividend income to replace income they no longer receive from their jobs. Stocks that pay a higher than average dividend are sometimes referred to as \"income stocks.\"\nCapital gains. Stocks are bought and sold constantly throughout each trading day, and their prices change all the time. When a stock price goes higher than what you paid to buy it, you can sell your shares at a profit. These profits are known as capital gains. In contrast, if you sell your stock for a lower price than you paid to buy it, you have incurred a capital loss.\nThe performance of an individual stock is also affected by what's happening in the stock market in general, which is in turn affected by the economy as a whole.",
+      "answer_length": 1060
+    },
+    {
+      "id": 3,
+      "question": "What is a stock ticker symbol?",
+      "answer": "A stock\nticker symbol\nis an arrangement of characters (typically letters, depending on the exchange) representing a particular security listed on an exchange or traded publicly. When a company issues security to the public marketplace, it selects an available ticker symbol for its securities that investors use to transact orders. Every listed security has a unique ticker symbol.\nFor example, the stock ticker symbol for Tesla, Inc. is",
+      "answer_length": 437
+    },
+    {
+      "id": 4,
+      "question": "What is a stock split?",
+      "answer": "stock split\nis a type of corporate action that occurs when a company's board of directors decides to divide the company's outstanding shares into a larger or smaller number of shares. Splits are a change in the number of outstanding shares of a company’s stock without a change in shareholders' ownership percentage in the company.\nFor example, with a 2:1 split, a client will receive 2 shares for each share owned prior to and through the open on the security's split ex-dividend (or “effective”) date.\nThere are two types of stock splits:\nForward splits are the division of the outstanding shares of a corporation into a larger number of shares. For example, in a three-for-one stock split (3:1), each old share is now equal to three shares. The price per share would also go down. In this example, if the pre-split share was worth $9, the post-split share would be worth $3.\nReverse splits are a reduction in the number of outstanding shares. For example, if you had 300 shares of XYZ and there was a one-to-three reverse split (1:3), your old 300 shares would now be equal to 100 shares. The price of each new share would also be higher. If the pre-split share was worth $2, the post-split share would be worth $6.",
+      "answer_length": 1218
+    },
+    {
+      "id": 5,
+      "question": "How do investors profit from \"short-selling\" stocks?",
+      "answer": "Another way to make money on stocks for which the price is falling is called\nshort selling\n(or going short). Short selling is a fairly straight forward concept: an investor borrows a stock, sells the stock, and then buys the stock back to return it to the lender.\nShort sellers are betting that the stock they sell will drop in price. If the price does drop after selling, the short seller buys it back at a lower price and returns it to the lender. The difference between the sell price and the buy price is the profit.\nPlease note: Just like borrowing funds will generate interest expense, borrowing stock to short will also result interest expenses. The interest varies depending on the supply and demand of that security on the particular trading day.\nInvestors who short the stock also face the risk that the stock will be forced to be bought back by the brokerage firms due to the fact that they are unable to continue borrowing that specific stock from the market and lend it to investors.",
+      "answer_length": 996
+    }
+  ]
+}

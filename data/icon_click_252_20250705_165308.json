@@ -1,0 +1,47 @@
+{
+  "category_id": 252,
+  "category_name": "Fully Paid Securities Lending Program",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 6,
+  "successful_expansions": 6,
+  "total_extracted": 6,
+  "scraped_at": "2025-07-05T16:53:08.227959",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What kinds of securities are eligible for lending?",
+      "answer": "Currently, U.S. stocks and ETFs are eligible for lending in TradeUP's Fully Paid Securities Lending Program.",
+      "answer_length": 108
+    },
+    {
+      "id": 2,
+      "question": "Can I choose the position and share quantity to be lent?",
+      "answer": "Once you opt-in to TradeUP's Fully Paid Securities Lending (FPSL) Program, you agree to allow TradeUP to lend out any positions of any share quantity on your behalf at its disclosure. At this time, you will not be able to choose the position or share quantity to be lent.",
+      "answer_length": 271
+    },
+    {
+      "id": 3,
+      "question": "Does stock lending affect corporate actions such as proxy voting and dividends?",
+      "answer": "Once the shares are lent out, you are no longer entitled to the corresponding voting rights of the shares. Generally, the lent shares will be recalled and returned to you (but not guaranteed) before dividends are paid. Even if the shares are not returned,\nyou will still receive cash equal to any dividends earned. These payments are often referred to as “substitute” or “manufactured” payments, which are subject to different tax treatment from qualified dividends.",
+      "answer_length": 466
+    },
+    {
+      "id": 4,
+      "question": "How is Interest calculated from FPSL? When will the lending interests be credited?",
+      "answer": "Interest received from TradeUP's Fully Paid Securities Lending Program (FPSL) is dependent on market demand for the stock and the lending interest rate on the day of lending in the OTC securities lending market.\nPlease note, if there is no demand to borrow the stock(s) in your portfolio, your stock(s) may not be lent out and there will be no stock loan interest.\nYou can find the Fully Paid Securities Lending (FPSL) interest and other FPSL-related details on your monthly statement. The interest is accrued daily and credited on the last day of the month.",
+      "answer_length": 558
+    },
+    {
+      "id": 5,
+      "question": "Does opting into FPSL affect selling shares or my buying power?",
+      "answer": "Your selling and account buying power are not affected in any way. After selling a lent stock, TradeUP will recall the shares from the borrower and settle the transaction on your behalf on settlement day. The lending activities of the shares will be terminated accordingly.",
+      "answer_length": 273
+    },
+    {
+      "id": 6,
+      "question": "Under what circumstances might lending be terminated?",
+      "answer": "Under TradeUP's Fully Paid Securities Lending program, shares lent may be terminated for the following reasons:\nLent shares are transferred out\nLent shares are sold\nOption exercise/assignment\nAccount closure\nClient contacts TradeUP to opt out of FPSL",
+      "answer_length": 250
+    }
+  ]
+}

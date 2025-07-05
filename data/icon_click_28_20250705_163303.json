@@ -1,0 +1,107 @@
+{
+  "category_id": 28,
+  "category_name": "Stock Trading - Margin Account",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 16,
+  "successful_expansions": 16,
+  "total_extracted": 16,
+  "scraped_at": "2025-07-05T16:33:03.628219",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What are the benefits and risks of a margin account?",
+      "answer": "Benefits:\nPurchase more shares than you could with just the available cash in your account, based on your eligible collateral.\nIf the stock price goes up, your earnings are amplified because you hold more shares.\nYou're able to short securities and catch market opportunities in both directions.\nRisks:\nYou can lose more than your initial deposit.\nThe brokerage firm can force the sale of securities in your account.\nThe brokerage firm can sell your securities without contacting you.\nYou are not entitled to an extension of time on a margin call.\nOpen short-sale positions could cost you.\nClick here\nto learn more about trading in a margin account.",
+      "answer_length": 649
+    },
+    {
+      "id": 2,
+      "question": "How do I upgrade to a margin account if I have a cash account?",
+      "answer": "To upgrade to a margin account from a cash account, please follow these steps:\n1. Click\nPortfolio > More > Upgrade to Margin Account.\n2. Click “Upgrade to Margin”\nto submit your request.",
+      "answer_length": 186
+    },
+    {
+      "id": 3,
+      "question": "What are the differences between a margin account and a cash account?",
+      "answer": "The main differences between margin and cash accounts are:\nAvailability of funds\nTrading capacity\nDay trading limits\nMargin accounts with a balance of $2,000 or more (not including option positions) can trade with leverage; cash accounts can only trade with the client’s own funds.\nMargin accounts with a total account equity of $2,000 or more can place short sale orders; cash accounts can only sell positions that they already own.\nMargin accounts are subject to a day trading limit. For margin account with a total account equity below $25,000, investors can day trade up to 3 times within five consecutive business days; Cash accounts can day trade with settled funds.",
+      "answer_length": 672
+    },
+    {
+      "id": 4,
+      "question": "Can I day trade in a margin account?",
+      "answer": ", if your total account equity (including all of your cash and securities) is below $25,000, you can day trade up to 3 times within five consecutive business days. Five consecutive business days do not necessarily represent from Monday to Friday, it is back counted five business days from the concurrent day and including the concurrent day. Once your account has 3 day trades within five consecutive business days, your account will be restricted from opening new positions until the next trading day that allows you to day trade again.",
+      "answer_length": 538
+    },
+    {
+      "id": 5,
+      "question": "What is TradeUP's leverage allowance for U.S. stocks?",
+      "answer": "With TradeUP, the leverage is up to 4x for day trades, but each stock may have individual margin requirements. Margin financing is only available when an account's net value is over $2,000.",
+      "answer_length": 189
+    },
+    {
+      "id": 6,
+      "question": "Why am I not able to open any positions?",
+      "answer": "If your total account equity is less than $25,000 and you have already made 3 day trades within the last five trading days, your account will be restricted from opening new positions to prevent you from triggering the Pattern Day Trader rule and getting your account restricted.",
+      "answer_length": 278
+    },
+    {
+      "id": 7,
+      "question": "What is the margin interest amount charged by TradeUP and how will the margin interest be charged to my account?",
+      "answer": "Margin interest is accrued daily and charged once a month. Annual margin interest varies based on your outstanding margin balance. Your daily margin interest is the\neffective margin annual interest / 360 * your overnight margin balance\n. If you do not hold any margin balance overnight, then there will not be any margin interest generated.\nPlease visit:\nhttps://www.tradeup.com/pricing/commissions-us\nto view the most updated effective annual margin interest with TradeUP Securities.",
+      "answer_length": 484
+    },
+    {
+      "id": 8,
+      "question": "How do I cover my margin balance?",
+      "answer": "If you currently have outstanding margin balance on your account, you can either:\nDeposit new funds into your account\nLiquidate your existing positions to cover the margin balance",
+      "answer_length": 179
+    },
+    {
+      "id": 9,
+      "question": "What are the differences between the initial margin requirement and the maintenance margin requirement?",
+      "answer": "Margin requirements\ntell you how and when you can borrow, the type of deposits you need to make, and the level of equity that you must maintain in your account. Failure to meet these requirements will result in forced liquidation of assets until the requirements are satisfied.\nInitial Margin Requirement\nis the percentage of the purchase price of the securities that the investor must deposit into their account.\nFor example, say the margin requirement for ABC stock is 50%. If you would like to purchase $10,000 of ABC stock, you need to have at least $5000 cash available in your TradeUP account to send in that order.\nYou can find each security’s initial margin requirement on the ticker page:\nThe symbols mentioned above are for demonstration only, and shall not be considered a recommendation or solicitation for the purchase or sale of securities, futures, or other investment products.\nMaintenance Margin Requirement\nis the minimum amount of equity in the security position that must be maintained in the investor's account.\nYou can view your total Maintenance Margin in\nProfile > TradeUP Account > Risk State.",
+      "answer_length": 1118
+    },
+    {
+      "id": 10,
+      "question": "What is a margin call?",
+      "answer": "When the assets in your brokerage account fall below the \"initial margin requirement\" for a stock you purchased, you might get a margin call.\nIn general, under Federal Reserve Board Regulation T (commonly referred to as Reg T), firms can initially lend a customer up to 50 percent of the total purchase price of an eligible stock. But in some cases, a firm might restrict you from purchasing or owning certain securities on margin. This can include stocks that do not trade on a national exchange such as the NYSE or NASDAQ and might also include stocks the firm believes to be particularly susceptible to price swings.\nIf you don't meet the deadline to cover the call, regardless of whether the stock you purchased on margin moves up or down, you will get a margin call requiring you to deposit the 50 percent of the purchase price ($5,000). While a firm may grant an extension, they are not required to do so. If you fail to make your deposit, and the firm does not grant you an extension, the firm is required to liquidate the shares you purchased on margin or can liquidate other assets you put up with the firm as collateral.\nPlease note: when you open a margin account, FINRA rules require you to deposit a “minimum margin” amount of $2,000 with your brokerage firm, but this may not be enough to cover your initial margin requirement.",
+      "answer_length": 1341
+    },
+    {
+      "id": 11,
+      "question": "When do I need to cover the margin call?",
+      "answer": "Due to the T+1 settlement rule, you normally have 1 business days to cover the call once the call is issued.\nFor example, you have until Tuesday afternoon to cover your margin call which was generated on Monday morning. However, due to market volatility, the deadline to cover your margin call could be sooner than 1 business day.\nPlease note: brokerage firms are not obligated to inform you before the force liquidation for a margin call.",
+      "answer_length": 439
+    },
+    {
+      "id": 12,
+      "question": "What is a maintenance call?",
+      "answer": "If your account's assets fall below regulatory and firm \"maintenance\" margin requirement, there will be a\nmaintenance call.\nFirms set margin requirements of their own—often called \"house\" requirements—that can be higher than the margin requirements under Reg T or the rules of FINRA and the exchanges.\nFor instance, a firm may set the maintenance margin at 30 or even 40 percent of the current market value of the securities in your account. Furthermore, firms can increase the \"house\" requirements at any time and are not required to provide you advanced written notice.\nIf your margin account falls below regulatory or firm maintenance margin requirements, you will end up with a maintenance margin call. In this case, you must put more money into the account to meet the required level, or the firm will likely force the sale—or liquidation—of some or all securities in your account to bring the account's equity back up to the required level.\nA firm is not required to notify you of the sale, though most do so as a courtesy, nor does the firm let you choose which securities or assets are sold to meet a margin call.",
+      "answer_length": 1121
+    },
+    {
+      "id": 13,
+      "question": "When do I need to cover the maintenance call?",
+      "answer": "A maintenance call normally needs to be covered within the same day the call is issued, due to the extensive market risk.",
+      "answer_length": 121
+    },
+    {
+      "id": 14,
+      "question": "Why can't I sell short?",
+      "answer": "There are three possible reasons you might not be able to short sell in your account.\nYour account is a cash account. Short selling is only allowed in margin accounts.\nYou have less than $2,000 total account equity in your margin account.\nThe security itself isn’t available for a short sale. This is usually because the security is a low-priced security that isn’t shortable or because we can’t borrow the security from the market and lend it to you due to current market supply and demand.",
+      "answer_length": 491
+    },
+    {
+      "id": 15,
+      "question": "Why were my positions force liquidated?",
+      "answer": "When you purchase on margin (using borrowed funds from TradeUP Securities to purchase more stocks), you agree to use the existing securities in your account as the collateral.\nIf the outstanding margin call or maintenance call was not met by depositing new funds into the account, then TradeUP Securities will force liquidate your positions to cover the call.",
+      "answer_length": 359
+    },
+    {
+      "id": 16,
+      "question": "What is a Margin Liquidation Violation?",
+      "answer": "margin liquidation violation\noccurs when your margin account receives both a\nFederal (Fed) call and a margin call\n, and instead of depositing cash to cover these calls, you choose to sell the securities that caused the calls.\nFor example,\nYou begin the day with $80,000 buying power.\nYou allocate the entire amount to XYZ stock, intending to sell before the market day ends.\nDue to a drop in the stock's value, selling at this point would result in losses. Opting to wait for a better market scenario, you keep the stock overnight.\nAt market day-end, reviewing your account balances reveals both a Fed call and a margin call from your brokerage.\nDuring the next market day, you sell the stock to cover the calls. However, this action caused margin liquidation violation as you've liquidated the position causing the calls without addressing the calls by deposits.\nIn the event of three such violations within a rolling 12-month period, your account will be restricted.\nAll trades will be limited to liquidation only for the next 90 calendar days.",
+      "answer_length": 1046
+    }
+  ]
+}

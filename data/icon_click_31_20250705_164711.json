@@ -1,0 +1,47 @@
+{
+  "category_id": 31,
+  "category_name": "Other",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 6,
+  "successful_expansions": 6,
+  "total_extracted": 6,
+  "scraped_at": "2025-07-05T16:47:11.770243",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "Where can I find my account number?",
+      "answer": "To locate your account number, please log into your TradeUP app and go to\nProfile > TradeUP Account > Live Account.",
+      "answer_length": 115
+    },
+    {
+      "id": 2,
+      "question": "Can I hold U.S stocks overnight?",
+      "answer": ", you can hold positions of U.S. stocks overnight.",
+      "answer_length": 50
+    },
+    {
+      "id": 3,
+      "question": "Is my account protected by Securities Investor Protection Corporation (SIPC)?",
+      "answer": ", TradeUP Securities, Inc. is a registered broker dealer and a member of Securities Investor Protection Corporation (SIPC). Your account(s) at TradeUP are protected by the SIPC with no additional cost to you.\nSIPC provides protection to the securities (such as stocks, bonds, mutual funds) and cash in your brokerage account of up to $500,000 ($250,000 limit for cash).\nSIPC protections are activated when client assets goes missing from a financially troubled (bankrupt) SIPC-member brokerage. If a brokerage firm is unable to return the securities or cash to the investor, then SIPC will step in and make sure the investor is made whole (of up to $500,000).\nFor more information on SIPC, please visit their website at:\nwww.sipc.org",
+      "answer_length": 733
+    },
+    {
+      "id": 4,
+      "question": "How do I enroll in the TradeUP Cash+ Program?",
+      "answer": "To enroll in the TradeUP Cash+ Program, please follow these steps:\n1. Navigate to the\nProfile\n2. Select the\nTradeUP Cash+ Program banner\n3. Select the\nEnroll w\nbutton.",
+      "answer_length": 167
+    },
+    {
+      "id": 5,
+      "question": "How is idle cash interest calculated in the TradeUP Cash+ Program?",
+      "answer": "Idle cash interest is calculated daily using the following formula:\nDaily idle cash interest = Idle cash balance * (APR/365)\nIdle cash interest takes into consideration on two main factors: days since enrollment and idle cash balance. Please see the table below for more details:\nIdle cash balance is defined as the end-of-day settled cash balance in an account. Accounts with an active margin loan do not have an idle cash balance for that day. Instant funding is not included in an account's idle cash balance.\nRates are effective starting December 26, 2024. Please note that these rates are subject to change without prior notice.",
+      "answer_length": 633
+    },
+    {
+      "id": 6,
+      "question": "Why don't I see my accrued idle cash interest?",
+      "answer": "Idle cash interest is calculated and accrues daily. However, the accrued interest is credited to the account on the last business day of the month.\nThe minimum monthly payout of accrued idle cash interest is $1.00. If the total accrued idle cash interest for the month is less than $1.00, the accrued interest expires and does not carry over to the next month.\nto see how idle cash interest is calculated in the TradeUP Cash+ Program.",
+      "answer_length": 434
+    }
+  ]
+}

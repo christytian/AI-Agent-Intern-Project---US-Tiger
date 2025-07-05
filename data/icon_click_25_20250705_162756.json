@@ -1,0 +1,59 @@
+{
+  "category_id": 25,
+  "category_name": "Stock Trading - Order Types",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 8,
+  "successful_expansions": 8,
+  "total_extracted": 8,
+  "scraped_at": "2025-07-05T16:27:56.146318",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "What is a market order?",
+      "answer": "Market orders\nto buy or sell securities will be executed immediately at the current market available price.\nA market order guarantees a fill or execution, but unlike a limit order, a market order provides no price protection. The price at which you actually execute (or fill) the trade can deviate from the last traded price, ending up with a price higher or lower than the market value you have previously seen due to the high volatility of the market or low trading volume of certain securities.",
+      "answer_length": 497
+    },
+    {
+      "id": 2,
+      "question": "What is a limit order?",
+      "answer": "limit order\nallows investors to buy and sell securities at a specific limit price or better. Investors often use limit orders to have more control over execution prices. With a limit order, the range of price is specified by the investor, but the order may not be executed at exactly the price specified. It can be executed at a more favorable price than the specified one.\nFor buy orders, a limit order will only be executed at the specified price or lower. For sell orders, a limit order will be executed at the specified price or higher.\nPlease note: If the stock price does not reach the specified price, a limit order will not be executed.",
+      "answer_length": 644
+    },
+    {
+      "id": 3,
+      "question": "What is a stop order?",
+      "answer": "stop order\nis an order to buy or sell a stock once the price of the stock reaches a specific price, known as the stop price. When the stock hits your stop price, the stop order becomes a market order. The market order is executed at the best price currently available.",
+      "answer_length": 268
+    },
+    {
+      "id": 4,
+      "question": "What is a stop limit order?",
+      "answer": "A stop limit order has both features of a stop order and a limit order. When the stock hits a stop price that you set, it triggers a limit order. Then, the limit order is executed at your limit price or better.",
+      "answer_length": 210
+    },
+    {
+      "id": 5,
+      "question": "Where can I view the different order types?",
+      "answer": "At TradeUP Securities, we offer Market Orders, Limit Orders, and more. To view more order types, click the dropdown menu next to Type.\nThe symbols mentioned above are for demonstration only, and shall not be considered a recommendation or solicitation for the purchase or sale of securities, futures, or other investment products.",
+      "answer_length": 330
+    },
+    {
+      "id": 6,
+      "question": "What is a GTC order?",
+      "answer": "GTC (Good-til-canceled) order\nis an order to buy or sell a stock that lasts until the order is completed or canceled.",
+      "answer_length": 117
+    },
+    {
+      "id": 7,
+      "question": "How long are GTC orders good for?",
+      "answer": "GTC orders may only be placed and executed during\nregular trading hours\n(9:30 a.m. - 4:00p.m. EST).\nOpen GTC orders will expire in 90 calendar days after they are placed on TradeUP.",
+      "answer_length": 181
+    },
+    {
+      "id": 8,
+      "question": "Under what circumstances might my GTC order be canceled?",
+      "answer": "Certain corporate actions including but not limited to stock split (forward or reverse), merger, acquisition, symbol change, delist, stock dividend and spin-offs will cause GTC orders for that symbol to be automatically canceled.",
+      "answer_length": 229
+    }
+  ]
+}

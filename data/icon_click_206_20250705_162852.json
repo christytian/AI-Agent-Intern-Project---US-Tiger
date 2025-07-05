@@ -1,0 +1,35 @@
+{
+  "category_id": 206,
+  "category_name": "Stock Trading - Fractional Shares",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 4,
+  "successful_expansions": 4,
+  "total_extracted": 4,
+  "scraped_at": "2025-07-05T16:28:52.476774",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "How do I place a fractional share order?",
+      "answer": "To place a\nfractional share order\n, go to the\npage, enter the stock symbol followed by\n. Enter either a share quantity (as little as 0.0001) or a dollar amount (minimum $1) to place your order. Fractional shares can be traded during Regular Trading Hours (9:30 AM – 4:00 PM EST on weekdays).",
+      "answer_length": 291
+    },
+    {
+      "id": 2,
+      "question": "Which stocks can I trade with fractional shares?",
+      "answer": "Currently, TradeUP supports fractional share trading for all stocks on the S&P 500 index.",
+      "answer_length": 89
+    },
+    {
+      "id": 3,
+      "question": "Is there a minimum for fractional share orders?",
+      "answer": "The minimum for fractional share orders is 0.0001 share or $1.",
+      "answer_length": 62
+    },
+    {
+      "id": 4,
+      "question": "What to expect when you hold fractional shares",
+      "answer": "Voting rights\nYou may not have voting rights if you own fractional shares.\nDividends\nFractional shareholders are entitled to dividend payments based on the number of shares they own.\nCorporate actions\nIn reverse splits or mergers and acquisitions, clients will receive cash-in-lieu for the fractional portion of the resulting shares. For example, if you owned 2.5 shares of XYZ, and there was a 1-for-2 reverse split, you would end up with 1 share of XYZ plus cash-in-lieu for 0.25 share.\nIn the case of forward splits, spinoffs, or stock dividends, clients will receive cash-in-lieu for the fractional portion of the additional shares. For example, if you owned 2.5 shares of XYZ, and there was a 2-for-1 forward split, you would end up with 4.5 shares of XYZ (2.5+2) plus cash-in-lieu for 0.5 share.\nAccount transfers\nFractional shares cannot be transferred to another brokerage firm. If you decide to transfer your account, you will need to liquidate the fractional positions in your account before initiating the transfer.",
+      "answer_length": 1026
+    }
+  ]
+}

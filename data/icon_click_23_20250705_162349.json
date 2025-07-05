@@ -1,0 +1,137 @@
+{
+  "category_id": 23,
+  "category_name": "Funding/Withdrawal",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 21,
+  "successful_expansions": 21,
+  "total_extracted": 21,
+  "scraped_at": "2025-07-05T16:23:49.793227",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "How do I deposit into my account?",
+      "answer": "TradeUP offers a variety of ways to fund your account, specifically through electronic bank deposit (\nWire Transfer\nDeposit is the electronic funds transfer method that allows you to first link your bank account with your TradeUP account, then initiate the deposit/withdrawal request directly in your TradeUP App. Currently, TradeUP can only support linking U.S. domestic bank accounts.\nTo submit an ACH deposit, please go to\nProfile > TradeUP Account >\nDeposit\nchoose\nACH Deposit\nfunds into your TradeUP account, please see the incoming wire instructions in\nProfile > TradeUP Account >\nDeposit\nchoose\nBank Transfer.\nImportant note: Wire transfers need to be initiated from your bank. When you fill out the wire deposit information, please indicate your account number and your name so we can post the funds to your account at the earliest convenience. Incoming wires without the account number or name may be returned.",
+      "answer_length": 919
+    },
+    {
+      "id": 2,
+      "question": "How long does it take for my funds to be available to trade if I fund the account via ACH?",
+      "answer": "Funds transferred through\nnormally take about 4-5 business days to clear and become available for trading. It takes time for your bank and our clearing firm to process such transaction. In order to assist you quickly catch the investment opportunities, at TradeUP, we offer instant funding so you can access a portion of your deposit early.\nPlease see the instant deposits schedule:\nTotal Account Balance Prior to Your ACH Deposit\nInstant Available Amount\n< 2000 USD\n1000 USD\n2000 - 5000 USD\n2000 USD\n5000 - 10000 USD\n5000 USD\n> 10000 USD\n10000 USD\nBecause ACH deposits can take several days and potentially be delayed, please make sure you have sufficient balance in your bank account to cover your deposit amounts.\nPlease note: Instant funding cannot be used to trade options or subscribe to IPOs.",
+      "answer_length": 799
+    },
+    {
+      "id": 3,
+      "question": "How long does it take for my funds to be available to trade if I use wire transfer?",
+      "answer": "Funds deposited by\nWire Transfer\nwill be credited to your TradeUP account for trading as soon as they are received.\nWires initiated from a U.S. domestic bank account will be available for trading on the same day if received before the cutoff time.\nte: The cutoff time for wires is 5PM EST.",
+      "answer_length": 289
+    },
+    {
+      "id": 4,
+      "question": "Where do I check my deposit history?",
+      "answer": "You may log into your TradeUP App and locate your transaction history under\nProfile > TradeUP Account > Transfer History",
+      "answer_length": 120
+    },
+    {
+      "id": 5,
+      "question": "Why does it say my funds are not available to withdraw?",
+      "answer": "There may be several possible reasons that you are not able to withdraw your funds:\nYou are withdrawing within 15 days of your deposit.\nPer TradeUP Securities AML policies, clients may not initiate a withdrawal for funds within 15 days of the deposit.\nThe funds are not settled yet.\nFunds will be available to withdraw after they are settled. The proceeds from your last sale transaction take 2 business days to settle. For option trades, the settlement period is 1 business day.\nYou are transferring out to a different account.\nFor AML purposes, if you are transferring out to a bank/brokerage account other than your originating bank account, there will be a 60-day withholding period.\nCompliance Review\nCertain withdrawal requests are subject to further compliance review and approval. Withdrawal activities without any trading activities or immediately after funding may be subject to enhanced due diligence questions or additional withholding period.\nRecent Incoming ACATS\nFunds/Securities deposited via ACATS cannot be withdrawn within 60 days through ACH or Wire.",
+      "answer_length": 1070
+    },
+    {
+      "id": 6,
+      "question": "How do I withdraw my funds via wire transfer?",
+      "answer": "Please navigate to\nProfile > TradeUP Account > Withdraw > Wire Withdraw\non the TradeUP app and follow the wire withdrawal instructions. Wire transfers will be processed within 1 business day if everything is in good order. Please note, there is a $50/transaction fee for wire out activities.\nTradeUP Securities, Inc. withdrawal fees do not cover third-party fees. The account holder will be solely responsible for any fees assessed by a beneficiary or correspondent bank. In addition, processing fees charged by your bank or its correspondent bank, which are not included in TradeUP Securities withdrawal fees, may be deducted from wire proceeds",
+      "answer_length": 645
+    },
+    {
+      "id": 7,
+      "question": "Why does it say you’re unable to verify my bank account?",
+      "answer": "Automatic Linkage\nACH Linkage, we use\nto verify your bank account information and link your bank account with your TradeUP account. Most of the time, this issue is caused by unstable connection at Plaid. Please feel free to try again later or switch to another bank account.\nIf you are continuing to have delays or issues with Automatic Linkage ACH Linkage, please link your account through our\nManual Linkage\noption.\nOn the Portfolio page, click\nDeposit\nto begin:\nSelect\nACH Deposit\nMethod:\nSelect\nManual Linkage > Get Started\nAdd Bank Account:\nEnter your\nbanking details:\nUpload a\nProof of Document >\nRead and acknowledge the\nManual Bank Account Linkage Statement > Submit:",
+      "answer_length": 675
+    },
+    {
+      "id": 8,
+      "question": "Why does it say my name on the bank does not match my account title?",
+      "answer": "In order for Plaid to verify your bank information, the name on your bank account has to match exactly with the name on your TradeUP account.\nFor example, if your name on your bank account is Ana-Victoria Smith, and your name at TradeUP is Ana Victoria Smith, then Plaid will not be able to verify your bank information due to the mismatch.\nYou may request to update your name at TradeUP by submitting a copy of your valid photo ID to:\nPlease note: We can only change your name to match the exact information you have on your ID.\nIf your bank account name matches exactly with your TradeUP account, the error may be due to multiple account holders. If your bank account is a joint account, it may still be rejected for name mismatch even if your name is on the account.",
+      "answer_length": 769
+    },
+    {
+      "id": 9,
+      "question": "What is an ACH reversal?",
+      "answer": "ACH reversal\nis when the bank account reverses a deposit transfer.\nThis usually occurs due to insufficient account balance or having a non-transactional account at the delivering institution. Or an ACH Reversal could occur by an account holder’s request.",
+      "answer_length": 254
+    },
+    {
+      "id": 10,
+      "question": "What happens if my ACH is reversed?",
+      "answer": "If your\nACH deposit is reversed\n, there will be a\n$30 fee\ncharged to your account for each ACH reversal. Meanwhile, our Compliance team will send you an email for more information regarding the reversal. Your funding and trading permissions may be temporarily restricted.\nPlease respond to the email and take required action accordingly to resume normal account functions. If there is a negative account balance generated due to the ACH reversal, the balance needs to be covered before trading permission can be granted.",
+      "answer_length": 520
+    },
+    {
+      "id": 11,
+      "question": "How do I transfer assets from an outside brokerage?",
+      "answer": "To transfer assets from an outside brokerage, TradeUP utilizes the\nsystem. ACATS  (Automated Customer Account Transfer Service) is a common, industry-wide electronic delivery system that is quick, reliable, and secure.\nStocks, cash, and other eligible assets can be transferred to TradeUP through the ACATS system. You can initiate a\nfull or partial\ntransfer using the following instructions:\nFull transfer:\n1.     Click\nPortfolio > More > Transfer\n2.     Select the outside brokerage that holds your account.\n3.     Fill in the applicable information. You can upload your most recent account statement here.\nSubmit\nyour transfer request.\nPartial transfer:\n1.     Email a completed\nAccount Transfer Form\nand your most recent account statement from the outside brokerage to\n(you can also reach out to this email to obtain a copy of the Account Transfer Form).",
+      "answer_length": 858
+    },
+    {
+      "id": 12,
+      "question": "How long does it take to complete an ACATS transfer?",
+      "answer": "Once the request is received, it typically takes\n5-7 business days\nfor the assets to process, deliver, and settle in your TradeUP account.",
+      "answer_length": 138
+    },
+    {
+      "id": 13,
+      "question": "Are there any fees to transfer my assets via ACATS?",
+      "answer": "TradeUP does not charge any fees for incoming ACATS transfers. However, your delivering brokerage may charge a transfer fee.",
+      "answer_length": 124
+    },
+    {
+      "id": 14,
+      "question": "Is it possible to transfer in OTC market securities?",
+      "answer": "Generally, OTC market securities are transferable. However, certain OTC market securities may not be supported by TradeUP.\nPlease click\nto see which OTC stocks are accepted at TradeUP.",
+      "answer_length": 184
+    },
+    {
+      "id": 15,
+      "question": "Is it possible to transfer in Fractional Shares?",
+      "answer": ", fractional shares are non-transferable. When you initiate the transfer, the outside brokerage will most likely liquidate all the fractional shares in your account based on their fair market value. The proceeds should then be transferred to your TradeUP account as a residual transfer.",
+      "answer_length": 286
+    },
+    {
+      "id": 16,
+      "question": "Is it possible to transfer in a Margin Balance?",
+      "answer": ", margin balances are transferable. Before transferring in a margin balance, make sure your TradeUP account has been upgraded to a margin account to avoid potential account deficits.",
+      "answer_length": 182
+    },
+    {
+      "id": 17,
+      "question": "Are all types of options contracts eligible for transfer?",
+      "answer": ", options contracts that expire within 7 days aren't transferable. You also can't use assets in your TradeUP account portfolio to serve as collateral for incoming options positions. Any collateral required for options must be part of the transfer.\nMake sure your TradeUP account has been approved for the applicable level of options trading to ensure support of more advanced strategies.",
+      "answer_length": 387
+    },
+    {
+      "id": 18,
+      "question": "What if the outside brokerage account has non-transferable assets?",
+      "answer": "You can transfer eligible assets as a partial account transfer. For a full account transfer, you’ll need to liquidate the non-transferable assets to cash in the outside brokerage account before initiating the transfer.",
+      "answer_length": 218
+    },
+    {
+      "id": 19,
+      "question": "How can I view all my authorized ACH linkages through Plaid?",
+      "answer": "To view your authorized ACH linkages through Plaid, you will have to sign up and access Plaid's portal\nOnce you've accessed Plaid's portal, you can not only view your authorized ACH linkages but can also choose to stop sharing or even delete the information directly from the portal.",
+      "answer_length": 283
+    },
+    {
+      "id": 20,
+      "question": "What happens when my ACH linkage expires after 12 months?",
+      "answer": "After 12 months, your ACH linkage will expire and you will have to\nrelink the bank\naccount using Plaid. You can choose to link a new bank account, or choose the same one previously used.\nPlease follow these steps to link a bank account through Plaid:\nNavigate to the\nPortfolio\ntab and click \"Deposit\".\nSelect \"ACH Deposit\" as the deposit method, then choose \"Automatic Linkage\".\nClick \"Get started!\", then follow Plaid's instructions to link the bank account.",
+      "answer_length": 459
+    },
+    {
+      "id": 21,
+      "question": "Why do I need to reauthorize ACH linkage through Plaid?",
+      "answer": "It is necessary to reauthorize ACH linkage due to\nSection 1033 of the Dodd-Frank Act of 2010.\nThis rule formalizes consumer rights for financial data access and introduces new consumer protections to help ensure safe and secure data sharing.\nAuthorized third parties (such as TradeUP) are entities that are authorized by a consumer to receive their financial account information. Per\nSection 1033\n, consumers will need to reauthorize their account connections (such as ACH linkage through Plaid) to authorized third parties\nevery 12 months.\nYou can learn more about Section 1033",
+      "answer_length": 578
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "category_id": 317,
+  "category_name": "Taxes and Account Statements",
+  "extraction_method": "icon_click_targeting",
+  "collapsed_faqs_found": 4,
+  "successful_expansions": 4,
+  "total_extracted": 4,
+  "scraped_at": "2025-07-05T16:55:23.399863",
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "TradeUP Account Statements",
+      "answer": "Where can I view my statement(s)?\nCustomers can view their statements electronically directly on the TradeUP Mobile App or on our web page at\nwww.tradeup.com\nE-Statements are usually posted on the 3rd business day of each month.\nDo I receive a statement every month?\nCustomers with assets (cash and/or positions) will receive their statement monthly or quarterly.\nMonthly if the account generated any activity (trades, transfers, dividends, interest)\nQuarterly if there are no activities\nCustomers with no assets (zero balance) will receive their last statement for the month their balance reaches zero.\nCustomers with zero balance will not receive statements until there is a balance on their account.",
+      "answer_length": 702
+    },
+    {
+      "id": 2,
+      "question": "TradeUP Tax Forms",
+      "answer": "What Tax Forms do TradeUP provide?\nTradeUP issues a Consolidated Form 1099 for US tax residents with a reportable tax event.\nn-US tax residents will receive a Form 1042-S.\nA Consolidated Form 1099 includes all the form(s) applicable if there was a reportable tax event. It may include: 1099-B, 1099-INT, 1099-DIV, 1099-OID, 1099-MISC\nIf you did not have a reportable tax event for the year, you will not receive a tax form\nWhere can I view my Tax Form(s)?\nCustomers can view their Tax Form(s) electronically directly on the TradeUP Mobile App or on our web page at\nwww.tradeup.com\n. Tax Forms are generated in mid-February of each year.\nYou can visit:\nhttps://www.tradeup.com/profile/report/tax\nto download your Tax Form(s).\nOr click\nfor more details to view your Tax Form(s).\nIf your TradeUP account is closed, please contact TradeUP Customer Support by email at\nor reach out to us on !\nError(s) on my Tax Form\nIf you believe your Tax Form contains inaccurate information, please contact TradeUP Customer Support by email at\nor reach out to us on !",
+      "answer_length": 1049
+    },
+    {
+      "id": 3,
+      "question": "Where can I view my Tax Form(s)?",
+      "answer": "You can access your tax documents on the TradeUP platform by following these steps.\nOn TradeUP Website\n1. Log into your account on TradeUP:\nhttps://www.tradeup.com/profile\n2. Navigate to the\nStatement\n3. Navigate to the\nTax Document\ntab in order to access and download your tax form\nOn TradeUP Mobile App\n1. In your TradeUP app, navigate to the\nTradeUP Account\nicon on your profile page\n2. Navigate to the\nTax Documents\n3. Access and download the relevant tax form\nError(s) on my Tax Form\nIf your TradeUP account is closed, or you believe your Tax Form contains inaccurate information, please contact TradeUP Customer Support by email at\nor reach out to us on !",
+      "answer_length": 661
+    },
+    {
+      "id": 4,
+      "question": "TurboTax Direct Import",
+      "answer": "TradeUP now supports direct import into TurboTax! You can securely access and transfer your tax documents directly into TurboTax without manually uploading files. Below are the steps to upload your tax documents, directly through TurboTax.\n1. Open TurboTax and log in to your Intuit/TurboTax account.\n2. Navigate to\nFederal Taxes > Wages & Income\n3. Select\nAdd investments.\n4, When prompted to connect to your financial institution, enter\nTradeUP\nin the search bar. Select\nTradeUP Securities, Inc.\nFrom the list.\n5. Input your TradeUP Account Number. Your Form 1099 Document ID can be found in the top righthand corner of your Form 1099 Composite, which is available for download in your TradeUP account center.\n6. After submitting this information, TurboTax will automatically import your tax data, and you can then proceed with the tax filing process!\nIf you have any other questions, please contact TradeUP Customer Support by email at\nor reach out to us on !",
+      "answer_length": 962
+    }
+  ]
+}
