@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 import pickle
+from datetime import datetime
 
 # Core libraries
 from langchain_community.document_loaders import (
@@ -261,18 +262,48 @@ class RAGIndexer:
         # Save FAISS index
         self.vectorstore.save_local(str(save_path))
         
-        # Save metadata
-        metadata = {
+        # Get rich statistics from documents
+        content_stats = self.get_statistics()
+        
+        # Create comprehensive metadata combining technical + content info
+        rich_metadata = {
+            # Technical parameters (existing)
             "chunk_size": self.chunk_size,
             "chunk_overlap": self.chunk_overlap,
+            "embedding_model": self.embeddings.model,
             "num_documents": len(self.documents),
-            "embedding_model": self.embeddings.model
+            
+            # Content statistics (NEW!)
+            "total_qa_pairs": content_stats.get("total_qa_pairs", 0),
+            "total_questions": content_stats.get("total_qa_pairs", 0),  # Alias for compatibility
+            "total_faqs": content_stats.get("total_qa_pairs", 0),  # Another alias
+            "total_categories": content_stats.get("total_categories", 0),
+            "categories": content_stats.get("categories", []),
+            "category_names": content_stats.get("categories", []),  # Alias
+            "category_list": content_stats.get("categories", []),  # Another alias
+            
+            # Additional useful info
+            "file_type_distribution": content_stats.get("file_type_distribution", {}),
+            "total_characters": content_stats.get("total_characters", 0),
+            "average_document_length": content_stats.get("average_document_length", 0),
+            
+            # Indexing metadata
+            "indexed_at": str(datetime.now()),
+            "data_path": str(self.data_path),
+            "vectorstore_type": "FAISS"
         }
         
+        # Save rich metadata
         with open(save_path / "metadata.pkl", "wb") as f:
-            pickle.dump(metadata, f)
+            pickle.dump(rich_metadata, f)
         
-        logger.info(f"Vectorstore saved to {save_path}")
+        # Also save a human-readable JSON version for easy inspection
+        with open(save_path / "metadata.json", "w") as f:
+            json.dump(rich_metadata, f, indent=2, default=str)
+        
+        logger.info(f"Vectorstore and rich metadata saved to {save_path}")
+        logger.info(f"Statistics: {rich_metadata['total_qa_pairs']} QA pairs, {rich_metadata['total_categories']} categories")
+
     
     def run_indexing_pipeline(self, save_path: str = "vectorstore") -> FAISS:
         """
@@ -292,8 +323,35 @@ class RAGIndexer:
         # Step 3: Create vectorstore
         vectorstore = self.create_vectorstore(splits)
         
-        # Step 4: Save vectorstore
+        # Step 4: Save vectorstore with rich metadata
         self.save_vectorstore(save_path)
+        
+        # Step 5: Display comprehensive statistics
+        stats = self.get_statistics()
+        print("\n" + "="*60)
+        print("🎯 COMPREHENSIVE INDEXING STATISTICS")
+        print("="*60)
+        print(f"📚 Total QA Pairs: {stats.get('total_qa_pairs', 0)}")
+        print(f"📂 Total Categories: {stats.get('total_categories', 0)}")
+        print(f"📄 Total Documents: {stats.get('total_documents', 0)}")
+        print(f"🔤 Total Characters: {stats.get('total_characters', 0):,}")
+        print(f"📊 Average Doc Length: {stats.get('average_document_length', 0):.1f} chars")
+        print(f"🧩 Chunk Size: {self.chunk_size}")
+        print(f"🔄 Chunk Overlap: {self.chunk_overlap}")
+        print(f"🤖 Embedding Model: {self.embeddings.model}")
+        
+        if stats.get('categories'):
+            print(f"\n📂 Categories Found:")
+            for i, category in enumerate(stats['categories'], 1):
+                print(f"   {i:2d}. {category}")
+        
+        if stats.get('file_type_distribution'):
+            print(f"\n📁 File Types:")
+            for ext, count in stats['file_type_distribution'].items():
+                print(f"   {ext}: {count} files")
+        
+        print(f"\n💾 Saved to: {save_path}")
+        print("="*60)
         
         logger.info("RAG indexing pipeline completed successfully")
         return vectorstore
