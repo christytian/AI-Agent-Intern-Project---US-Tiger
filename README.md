@@ -69,38 +69,60 @@ SECRET_KEY=your_flask_secret_key_here
 
 ## Data Preparation
 
-### FAQ Data Format
+### Automated FAQ Scraping
 
-Your FAQ data should be stored as JSON files in the `data/` directory. Each file should follow this structure:
+This system uses automated web scraping to collect FAQ data from the TradeUP website. The scraper targets specific FAQ categories and extracts question-answer pairs automatically.
 
+### Running the Web Scraper
+
+```bash
+python comprehensive_scraper.py
+```
+
+The scraper will prompt you to enter a category ID:
+- **22**: New Accounts
+- **23**: Funding/Withdrawal  
+- **24**: Stock Trading - General
+- **25**: Stock Trading - Order Types
+- **30**: Option Trading
+- **And more...**
+
+### What the Scraper Does
+
+1. **Launches a browser** and navigates to the TradeUP FAQ page
+2. **Finds collapsed FAQs** (those with + icons) 
+3. **Clicks to expand** each FAQ automatically
+4. **Extracts** the question and answer content
+5. **Saves** the data as properly formatted JSON files in the `data/` folder
+
+### Generated JSON Format
+
+Each category creates a JSON file like:
 ```json
 {
-  "category_id": "trading",
-  "category_name": "Trading",
-  "extraction_method": "manual",
-  "scraped_at": "2025-01-15",
+  "category_id": 22,
+  "category_name": "New Accounts",
+  "extraction_method": "icon_click_targeting", 
+  "scraped_at": "2025-07-05T16:18:32.994289",
   "qa_pairs": [
     {
       "id": 1,
-      "question": "How do I place my first trade?",
-      "answer": "To place your first trade, log into your account...",
-      "answer_length": 150
+      "question": "What do I need to open an account?",
+      "answer": "We offer individual brokerage accounts...",
+      "answer_length": 1084
     }
   ]
 }
 ```
 
-### Supported Categories
+### Scraping Multiple Categories
 
-Organize your FAQs into categories such as:
-- Account Management
-- Trading
-- Funding and Deposits
-- Options Trading
-- Margin Trading
-- Platform Features
-- Fees and Pricing
-- Technical Support
+To collect FAQs from all categories:
+1. Run `python comprehensive_scraper.py`
+2. Enter a category ID (e.g., 22)
+3. Wait for scraping to complete
+4. Repeat for other category IDs
+5. All JSON files will be saved in the `data/` folder
 
 ## Usage
 
