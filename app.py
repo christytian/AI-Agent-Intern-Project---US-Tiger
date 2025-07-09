@@ -1,5 +1,6 @@
-# app.py - Flask Backend (Same folder as smart_faq.py)
+# app.py - Your original working code + separate Swagger API
 from flask import Flask, render_template, request, jsonify
+from flask_restx import Api, Resource, fields
 import json
 import os
 from dotenv import load_dotenv
@@ -21,16 +22,11 @@ def init_faq_system():
     global faq_system
     try:
         faq_system = SmartFAQSystem()
-        print("✅ Smart FAQ System loaded successfully")
+        print("Smart FAQ System loaded successfully")
         return True
     except Exception as e:
-        print(f"❌ Error loading FAQ system: {e}")
+        print(f"Error loading FAQ system: {e}")
         return False
-
-@app.route('/')
-def home():
-    """Serve the main chat interface"""
-    return render_template('index.html')
 
 def convert_numpy_types(obj):
     """Convert numpy types to Python native types for JSON serialization"""
@@ -46,6 +42,11 @@ def convert_numpy_types(obj):
         return [convert_numpy_types(item) for item in obj]
     return obj
 
+# KEEP YOUR ORIGINAL WORKING ROUTES EXACTLY AS THEY ARE
+@app.route('/')
+def home():
+    """Serve the main chat interface"""
+    return render_template('index.html')
 
 @app.route('/api/ask', methods=['POST'])
 def ask_question():
@@ -54,22 +55,22 @@ def ask_question():
         data = request.get_json()
         question = data.get('question', '').strip()
         
-        print(f"🔍 DEBUG: Received question: '{question}'")
+        print(f"DEBUG: Received question: '{question}'")
         
         if not question:
-            print("❌ DEBUG: No question provided")
+            print("DEBUG: No question provided")
             return jsonify({'error': 'No question provided'}), 400
         
         if not faq_system:
-            print("❌ DEBUG: FAQ system not available")
+            print("DEBUG: FAQ system not available")
             return jsonify({'error': 'FAQ system not available'}), 500
         
-        print(f"✅ DEBUG: FAQ system loaded, processing question...")
+        print(f"DEBUG: FAQ system loaded, processing question...")
         
         # Get response from Smart FAQ system
         result = faq_system.get_smart_response(question)
         
-        print(f"✅ DEBUG: Got response, preparing JSON...")
+        print(f"DEBUG: Got response, preparing JSON...")
         
         # Convert all numpy types to Python native types
         response_data = {
@@ -88,7 +89,7 @@ def ask_question():
                 source_data = convert_numpy_types(source)
                 response_data['sources'].append(source_data)
         
-        print(f"✅ DEBUG: JSON prepared, returning to client")
+        print(f"DEBUG: JSON prepared, returning to client")
         
         return jsonify(response_data)
         
@@ -96,7 +97,7 @@ def ask_question():
         # Print full error details
         import traceback
         error_details = traceback.format_exc()
-        print(f"❌ DEBUG: Error in ask_question:")
+        print(f"DEBUG: Error in ask_question:")
         print(error_details)
         
         return jsonify({
@@ -112,7 +113,7 @@ def get_stats():
     
     try:
         metadata = getattr(faq_system, 'metadata', {})
-        print(f"📊 Available metadata keys: {list(metadata.keys())}")
+        print(f"Available metadata keys: {list(metadata.keys())}")
         
         # Check if we have rich metadata
         has_rich_metadata = 'total_qa_pairs' in metadata or 'total_faqs' in metadata
@@ -132,7 +133,7 @@ def get_stats():
             
             total_categories = metadata.get('total_categories', len(categories))
             
-            print(f"✅ Using rich metadata: {total_faqs} FAQs, {total_categories} categories")
+            print(f"Using rich metadata: {total_faqs} FAQs, {total_categories} categories")
         else:
             # Fallback to basic metadata
             total_faqs = metadata.get('num_documents', 0)
@@ -155,7 +156,7 @@ def get_stats():
         return jsonify(response_data)
         
     except Exception as e:
-        print(f"❌ Stats error: {e}")
+        print(f"Stats error: {e}")
         return jsonify({
             'total_faqs': 0,
             'total_categories': 0,
@@ -187,19 +188,6 @@ def get_categories():
     
     categories = faq_system.metadata.get('categories', [])
     return jsonify(categories)
-
-if __name__ == '__main__':
-    print("🚀 Starting TradeUP Smart FAQ Flask App...")
-    print(f"📁 Working directory: {os.getcwd()}")
-    
-    # Initialize FAQ system
-    if init_faq_system():
-        print("🌐 Starting Flask server...")
-        print("🔗 Open your browser to: http://localhost:8000")
-        app.run(debug=True, host='0.0.0.0', port=8000)
-    else:
-        print("❌ Failed to start: FAQ system not available")
-        print("💡 Make sure smart_faq.py and vectorstore/ are in the same folder")
 
 @app.route('/api/reindex', methods=['POST'])
 def trigger_reindex():
@@ -233,3 +221,148 @@ def trigger_reindex():
             'success': False,
             'error': str(e)
         }), 500
+
+# ADD SWAGGER API DOCUMENTATION (separate from your working routes)
+# This creates the /docs/ interface without interfering with your existing routes
+api = Api(app, doc='/docs/', title='TradeUP FAQ API', description='API Testing Interface')
+
+# Define models for Swagger
+ask_model = api.model('Question', {
+    'question': fields.String(required=True, example='How do I open an account?')
+})
+
+# Swagger-only routes (these create the /docs/ interface)
+@api.route('/swagger/ask')
+class SwaggerAsk(Resource):
+    @api.expect(ask_model)
+    def post(self):
+        """Swagger documentation for /api/ask endpoint"""
+        # This just redirects to your working endpoint
+        return ask_question()
+
+@api.route('/swagger/stats')
+class SwaggerStats(Resource):
+    def get(self):
+        """Swagger documentation for /api/stats endpoint"""
+        return get_stats()
+
+@api.route('/swagger/quick-questions')
+class SwaggerQuickQuestions(Resource):
+    def get(self):
+        """Swagger documentation for /api/quick-questions endpoint"""
+        return get_quick_questions()
+
+@api.route('/swagger/categories')
+class SwaggerCategories(Resource):
+    def get(self):
+        """Swagger documentation for /api/categories endpoint"""
+        return get_categories()
+
+# Simple test page that works with your existing endpoints
+@app.route('/test')
+def test_page():
+    """Simple test interface that uses your working API endpoints"""
+    return '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>TradeUP FAQ API Tester</title>
+        <style>
+            body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+            .endpoint { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+            button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; }
+            input { width: 60%; padding: 8px; margin: 5px; }
+            .response { background: #e9f7ef; padding: 10px; margin: 10px 0; border-radius: 3px; max-height: 300px; overflow-y: auto; }
+            pre { white-space: pre-wrap; font-size: 12px; }
+        </style>
+    </head>
+    <body>
+        <h1>TradeUP FAQ API Tester</h1>
+        <p><a href="/docs/">Swagger Documentation</a> | <a href="/">Main App</a></p>
+        
+        <div class="endpoint">
+            <h3>POST /api/ask</h3>
+            <input type="text" id="question" placeholder="Enter your question" value="How do I open an account?">
+            <button onclick="askQuestion()">Ask Question</button>
+            <div id="askResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <div class="endpoint">
+            <h3>GET /api/stats</h3>
+            <button onclick="getStats()">Get Statistics</button>
+            <div id="statsResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <div class="endpoint">
+            <h3>GET /api/quick-questions</h3>
+            <button onclick="getQuickQuestions()">Get Quick Questions</button>
+            <div id="quickResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <script>
+            async function askQuestion() {
+                const question = document.getElementById('question').value;
+                const responseDiv = document.getElementById('askResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = '<p>Processing...</p>';
+                
+                try {
+                    const response = await fetch('/api/ask', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({question: question})
+                    });
+                    const data = await response.json();
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } catch (error) {
+                    responseDiv.innerHTML = '<p>Error: ' + error + '</p>';
+                }
+            }
+            
+            async function getStats() {
+                const responseDiv = document.getElementById('statsResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = '<p>Loading...</p>';
+                
+                try {
+                    const response = await fetch('/api/stats');
+                    const data = await response.json();
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } catch (error) {
+                    responseDiv.innerHTML = '<p>Error: ' + error + '</p>';
+                }
+            }
+            
+            async function getQuickQuestions() {
+                const responseDiv = document.getElementById('quickResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = '<p>Loading...</p>';
+                
+                try {
+                    const response = await fetch('/api/quick-questions');
+                    const data = await response.json();
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } catch (error) {
+                    responseDiv.innerHTML = '<p>Error: ' + error + '</p>';
+                }
+            }
+        </script>
+    </body>
+    </html>
+    '''
+
+if __name__ == '__main__':
+    print("Starting TradeUP Smart FAQ Flask App...")
+    print(f"Working directory: {os.getcwd()}")
+    
+    # Initialize FAQ system
+    if init_faq_system():
+        print("Starting Flask server...")
+        print("Open your browser to:")
+        print("   Main App: http://localhost:8000/")
+        print("   API Test: http://localhost:8000/test")
+        print("   API Docs: http://localhost:8000/docs/")
+        app.run(debug=True, host='0.0.0.0', port=8000)
+    else:
+        print("Failed to start: FAQ system not available")
+        print("Make sure smart_faq.py and vectorstore/ are in the same folder")

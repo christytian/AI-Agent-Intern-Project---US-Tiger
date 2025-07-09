@@ -318,21 +318,21 @@ FAQ SOURCES:
 {faq_content}
 
 CRITICAL BALANCE:
-✅ KEEP information that IS in the FAQ sources:
+ KEEP information that IS in the FAQ sources:
 - Specific numbers, percentages, dollar amounts that appear in FAQs
 - Step-by-step instructions that are explicitly provided in FAQs
 - UI navigation paths that are mentioned in FAQs
 - Specific features, programs, or procedures described in FAQs
 - Exact timeframes, requirements, or processes stated in FAQs
 
-❌ REMOVE information that is NOT in the FAQ sources:
+ REMOVE information that is NOT in the FAQ sources:
 - External knowledge not mentioned in FAQs
 - Made-up steps or processes not in FAQs
 - Assumptions about features not explicitly described
 - Links or URLs not provided in FAQs
 - Details that contradict FAQ information
 
-🎯 GUIDELINES:
+ GUIDELINES:
 1. If FAQ says "go to Profile > Deposit > ACH" → KEEP this exact instruction
 2. If FAQ says "up to 4x leverage" → KEEP this specific number
 3. If FAQ says "$2,000 minimum" → KEEP this specific amount
@@ -688,7 +688,7 @@ Response:"""
         """
         Debug the entire search process to identify issues
         """
-        print(f"\n🔍 DEBUG: Full search process for '{query}'")
+        print(f"\n DEBUG: Full search process for '{query}'")
         print("="*60)
         
         # Step 1: Intent analysis
@@ -745,14 +745,14 @@ Response:"""
     def interactive_smart_chat(self):
         """Smart FAQ interactive chat with intelligent inference"""
         print("\n" + "="*70)
-        print("🧠 TradeUP Smart FAQ Assistant")
+        print(" TradeUP Smart FAQ Assistant")
         print("="*70)
         print("I'm your intelligent FAQ assistant! I can:")
-        print("  🎯 Understand what you really want to know")
-        print("  🔍 Find comprehensive information from our FAQ database")
-        print("  🧩 Combine multiple FAQ sources intelligently")
-        print("  💡 Anticipate your related questions and concerns")
-        print("  📋 Provide structured, actionable guidance")
+        print("   Understand what you really want to know")
+        print("   Find comprehensive information from our FAQ database")
+        print("   Combine multiple FAQ sources intelligently")
+        print("   Anticipate your related questions and concerns")
+        print("   Provide structured, actionable guidance")
         print("\nCommands:")
         print("  • 'quit/exit/bye' - End conversation")
         print("  • 'stats' - System information")
@@ -770,7 +770,7 @@ Response:"""
                 user_input = input("You: ").strip()
                 
                 if user_input.lower() in ['quit', 'exit', 'bye', 'q']:
-                    print("\n🧠 Thank you for using TradeUP Smart FAQ Assistant!")
+                    print("\n Thank you for using TradeUP Smart FAQ Assistant!")
                     print("Your intelligent assistant for comprehensive TradeUP guidance! 📚✨")
                     break
                 
@@ -800,7 +800,7 @@ Response:"""
                         suggestion_index = int(user_input) - 1
                         if 0 <= suggestion_index < len(self.current_suggestions):
                             user_input = self.current_suggestions[suggestion_index]
-                            print(f"📋 You selected: {user_input}")
+                            print(f" You selected: {user_input}")
                         else:
                             print(f"Please enter a number between 1 and {len(self.current_suggestions)}")
                             continue
@@ -810,42 +810,42 @@ Response:"""
                 if not user_input:
                     continue
                 
-                print("\n🧠 Smart Assistant: Analyzing your needs and searching comprehensively...")
+                print("\n Smart Assistant: Analyzing your needs and searching comprehensively...")
                 result = self.get_smart_response(user_input)
                 
-                print(f"\n🧠 TradeUP Smart Assistant:")
+                print(f"\n TradeUP Smart Assistant:")
                 print(f"{result['response']}")
                 
                 # Show intelligent analysis info
                 intent = result['intent_analysis']
-                print(f"\n💡 Smart Analysis:")
-                print(f"   🎯 Main Intent: {intent.get('main_intent', 'General inquiry')}")
-                print(f"   🔍 Sources Used: {result['num_sources']} FAQ entries from {len(result['categories_used'])} categories")
+                print(f"\n Smart Analysis:")
+                print(f"    Main Intent: {intent.get('main_intent', 'General inquiry')}")
+                print(f"    Sources Used: {result['num_sources']} FAQ entries from {len(result['categories_used'])} categories")
                 if result['categories_used']:
-                    print(f"   📚 Categories: {', '.join(result['categories_used'])}")
+                    print(f"    Categories: {', '.join(result['categories_used'])}")
                 
                 # Show suggested follow-up questions
                 if result['suggested_questions']:
-                    print(f"\n💭 You might also want to ask:")
+                    print(f"\n You might also want to ask:")
                     self.current_suggestions = result['suggested_questions']
                     for i, suggestion in enumerate(result['suggested_questions'], 1):
                         print(f"   {i}. {suggestion}")
-                    print(f"\n   💡 Tip: Type a number (1-{len(result['suggested_questions'])}) to ask that question!")
+                    print(f"\n    Tip: Type a number (1-{len(result['suggested_questions'])}) to ask that question!")
                 else:
                     self.current_suggestions = []
                 
                 print("\n" + "-"*70 + "\n")
                 
             except KeyboardInterrupt:
-                print("\n\n🧠 Chat interrupted. Goodbye!")
+                print("\n\n Chat interrupted. Goodbye!")
                 break
             except Exception as e:
-                print(f"\n❌ Error: {str(e)}")
+                print(f"\n Error: {str(e)}")
                 print("Please try again.\n")
     
     def _print_smart_stats(self):
         """Print smart system statistics"""
-        print("\n📊 Smart FAQ System Statistics:")
+        print("\n Smart FAQ System Statistics:")
         print("="*50)
         
         if self.metadata:
@@ -853,14 +853,14 @@ Response:"""
                 print(f"{key}: {value}")
         
         print(f"\nSmart Features:")
-        print(f"  🧠 Intent Analysis: ✅ Active")
-        print(f"  🔍 Comprehensive Search: ✅ Active")
-        print(f"  🧩 Multi-source Synthesis: ✅ Active")
-        print(f"  💡 Proactive Suggestions: ✅ Active")
-        print(f"  💭 Suggested Questions: ✅ Active")
-        print(f"  📝 Conversation Context: {len(self.conversation_context)} exchanges")
-        print(f"  🎯 Similarity Threshold: {self.similarity_threshold}")
-        print(f"  🤖 AI Model: {self.chat_model}")
+        print(f"   Intent Analysis:  Active")
+        print(f"   Comprehensive Search:  Active")
+        print(f"   Multi-source Synthesis:  Active")
+        print(f"   Proactive Suggestions:  Active")
+        print(f"   Suggested Questions:  Active")
+        print(f"   Conversation Context: {len(self.conversation_context)} exchanges")
+        print(f"   Similarity Threshold: {self.similarity_threshold}")
+        print(f"   AI Model: {self.chat_model}")
         print("="*50 + "\n")
     
     def _print_faq_topics(self):
@@ -882,7 +882,7 @@ Response:"""
             print("\n📝 No conversation context yet.\n")
             return
         
-        print(f"\n📝 Conversation Context ({len(self.conversation_context)} exchanges):")
+        print(f"\n Conversation Context ({len(self.conversation_context)} exchanges):")
         print("="*50)
         for i, ctx in enumerate(self.conversation_context, 1):
             print(f"{i}. Q: {ctx['query']}")
@@ -901,19 +901,19 @@ def main():
         # Initialize Smart FAQ system
         smart_faq = SmartFAQSystem()
         
-        print("✅ Smart FAQ Assistant ready!")
-        print("🧠 Enhanced with intelligent inference and comprehensive synthesis")
-        print("💭 Now featuring intelligent suggested questions!")
-        print("🔧 Improved retrieval and conservative FAQ-based responses")
-        print("📝 Use 'debug [question]' to troubleshoot search issues")
-        print("💡 Type numbers (1-5) to quickly ask suggested questions")
+        print(" Smart FAQ Assistant ready!")
+        print(" Enhanced with intelligent inference and comprehensive synthesis")
+        print(" Now featuring intelligent suggested questions!")
+        print(" Improved retrieval and conservative FAQ-based responses")
+        print(" Use 'debug [question]' to troubleshoot search issues")
+        print(" Type numbers (1-5) to quickly ask suggested questions")
         
         # Start smart interactive chat
         smart_faq.interactive_smart_chat()
         
     except Exception as e:
         logger.error(f"Smart FAQ system failed: {str(e)}")
-        print(f"❌ Error: {str(e)}")
+        print(f" Error: {str(e)}")
 
 
 if __name__ == "__main__":
