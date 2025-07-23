@@ -28,7 +28,7 @@
     {
       "id": 4,
       "question": "Where can I access TradeUP’s newsletters and blogs?",
-      "answer": "You may view our weekly newsletters and blogs here:\nTradeUP Blog",
+      "answer": "You may view our weekly newsletters and blogs here:\n<a href=\"https://blog.tradeup.com\" target=\"_blank\">TradeUP Blog</a>",
       "answer_length": 64
     },
     {

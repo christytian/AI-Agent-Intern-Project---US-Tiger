@@ -1,4 +1,4 @@
-# faq_market_agent.py - AI Agent for FAQ + Market Data
+# faq_market_agent.py - AI Agent for FAQ + Market Data (Updated)
 import os
 from typing import Dict, List, Any, Optional
 from langchain.agents import create_openai_functions_agent, AgentExecutor
@@ -12,25 +12,25 @@ import json
 from datetime import datetime, timedelta
 import pandas as pd
 
-# Import your existing FAQ system
-from smarter_faq_rag import SmartFAQSystem
+# Import your UPDATED LLM-powered FAQ system
+from optimized_faq_system import LLMPoweredOptimizedFAQSystem
 
 class FAQMarketAgent:
     def __init__(self, memory_window: int = 10):
         """
-        Initialize FAQ + Market Data AI Agent
+        Initialize FAQ + Market Data AI Agent with LLM-powered FAQ system
         
         Args:
             memory_window: Number of previous conversations to remember
         """
-        print("Initializing FAQ + Market Data AI Agent...")
+        print("Initializing FAQ + Market Data AI Agent with LLM-powered FAQ system...")
         
-        # Initialize your existing FAQ system
-        self.faq_system = SmartFAQSystem()
+        # Initialize your LLM-powered FAQ system
+        self.faq_system = LLMPoweredOptimizedFAQSystem()
         
         # Initialize LLM
         self.llm = ChatOpenAI(
-            model="gpt-4",
+            model="gpt-4o-mini",  # Using faster model for cost efficiency
             temperature=0.1,
             openai_api_key=os.getenv('OPENAI_API_KEY')
         )
@@ -65,14 +65,14 @@ class FAQMarketAgent:
             early_stopping_method="generate"
         )
         
-        print("FAQ + Market Data AI Agent initialized successfully!")
+        print("FAQ + Market Data AI Agent initialized successfully with LLM-powered FAQ system!")
     
     def _create_tools(self) -> List[Tool]:
         """Create tools for the agent"""
         return [
             Tool(
                 name="faq_search",
-                description="Search TradeUP FAQ database for answers about trading policies, procedures, account types, fees, and general trading information. Use this for any questions about TradeUP services.",
+                description="Search TradeUP FAQ database for answers about trading policies, procedures, account types, fees, and general trading information. Use this for any questions about TradeUP services. Returns intelligent, comprehensive responses.",
                 func=self._faq_search_tool
             ),
             Tool(
@@ -99,18 +99,19 @@ class FAQMarketAgent:
     
     def _create_agent_prompt(self) -> ChatPromptTemplate:
         """Create the agent prompt template"""
-        system_message = """You are a helpful TradeUP assistant that combines FAQ knowledge with real-time market data.
+        system_message = """You are a helpful TradeUP assistant that combines LLM-powered FAQ knowledge with real-time market data.
 
 Your capabilities:
-1. Answer questions about TradeUP services using the FAQ database
+1. Answer questions about TradeUP services using the LLM-powered FAQ database (intelligent, comprehensive responses)
 2. Provide real-time stock prices and market data
 3. Get stock news and company information
 4. Help with both trading questions and market information
 
 Guidelines:
-- For questions about TradeUP policies, fees, account types, procedures: Use FAQ search
+- For questions about TradeUP policies, fees, account types, procedures: Use FAQ search (powered by LLM for intelligent responses)
 - For stock prices, market data, company info: Use market data tools
 - For questions combining both (e.g., "Can I trade Apple stock and what's the price?"): Use both tools
+- The FAQ system now provides intelligent, comprehensive responses using LLM technology
 - Always be accurate and helpful
 - If you can't find information, clearly explain what you can help with
 - Provide context and explanations, not just raw data
@@ -122,6 +123,9 @@ When providing market data:
 - Provide context for the numbers when helpful
 
 When providing FAQ information:
+- The FAQ system now uses LLM intelligence to provide comprehensive answers
+- It can synthesize information from multiple FAQ sources
+- It provides smart suggestions for related questions
 - Be accurate and refer to official TradeUP policies
 - If something requires account-specific information, direct them to contact support"""
 
@@ -135,21 +139,35 @@ When providing FAQ information:
         return prompt
     
     def _faq_search_tool(self, query: str) -> str:
-        """Tool wrapper for your existing FAQ system"""
+        """Tool wrapper for your LLM-powered FAQ system"""
         try:
-            print(f"FAQ Search: {query}")
+            print(f"FAQ Search (LLM-powered): {query}")
             result = self.faq_system.get_smart_response(query)
             
-            # Format the response for the agent
-            response = f"FAQ Response: {result['response']}\n"
+            # Check if this should actually use market agent
+            if result.get('use_market_agent', False):
+                return f"FAQ System Routing: This question should use market data tools. Reason: {result.get('routing_reason', 'Market data required')}"
+            
+            # Format the LLM-powered response for the agent
+            response = f"LLM-Powered FAQ Response: {result['response']}\n"
+            
+            # Add metadata about the intelligent response
             if result.get('categories_used'):
-                response += f"Categories: {', '.join(result['categories_used'])}\n"
-            if result.get('sources'):
-                response += f"Sources found: {len(result['sources'])}"
+                response += f"Categories covered: {', '.join(result['categories_used'])}\n"
+            if result.get('sources_count', 0) > 0:
+                response += f"FAQ sources synthesized: {result['sources_count']}\n"
+            if result.get('from_cache'):
+                response += f"Response served from cache (instant)\n"
+            else:
+                response += f"Generated using LLM intelligence\n"
+            
+            # Add suggested follow-up questions
+            if result.get('suggested_questions'):
+                response += f"Related questions users often ask: {', '.join(result['suggested_questions'][:3])}"
             
             return response
         except Exception as e:
-            return f"Error searching FAQ: {str(e)}"
+            return f"Error in LLM-powered FAQ search: {str(e)}"
     
     def _get_stock_quote_tool(self, symbol: str) -> str:
         """Get real-time stock quote"""
@@ -275,52 +293,20 @@ After-Hours: 4:00 PM - 8:00 PM ET"""
         try:
             print(f"Searching symbol for: {company_name}")
             
-            # Common company name to symbol mappings
+            # Enhanced company name to symbol mappings
             common_symbols = {
-                'apple': 'AAPL',
-                'microsoft': 'MSFT', 
-                'google': 'GOOGL',
-                'alphabet': 'GOOGL',
-                'amazon': 'AMZN',
-                'tesla': 'TSLA',
-                'nvidia': 'NVDA',
-                'meta': 'META',
-                'facebook': 'META',
-                'netflix': 'NFLX',
-                'adobe': 'ADBE',
-                'salesforce': 'CRM',
-                'oracle': 'ORCL',
-                'intel': 'INTC',
-                'amd': 'AMD',
-                'uber': 'UBER',
-                'lyft': 'LYFT',
-                'airbnb': 'ABNB',
-                'zoom': 'ZM',
-                'slack': 'WORK',
-                'twitter': 'TWTR',
-                'snapchat': 'SNAP',
-                'pinterest': 'PINS',
-                'square': 'SQ',
-                'paypal': 'PYPL',
-                'visa': 'V',
-                'mastercard': 'MA',
-                'jpmorgan': 'JPM',
-                'goldman': 'GS',
-                'morgan stanley': 'MS',
-                'bank of america': 'BAC',
-                'wells fargo': 'WFC',
-                'coca cola': 'KO',
-                'pepsi': 'PEP',
-                'walmart': 'WMT',
-                'target': 'TGT',
-                'costco': 'COST',
-                'home depot': 'HD',
-                'lowes': 'LOW',
-                'disney': 'DIS',
-                'boeing': 'BA',
-                'caterpillar': 'CAT',
-                'ge': 'GE',
-                'general electric': 'GE'
+                'apple': 'AAPL', 'microsoft': 'MSFT', 'google': 'GOOGL', 'alphabet': 'GOOGL',
+                'amazon': 'AMZN', 'tesla': 'TSLA', 'nvidia': 'NVDA', 'meta': 'META',
+                'facebook': 'META', 'netflix': 'NFLX', 'adobe': 'ADBE', 'salesforce': 'CRM',
+                'oracle': 'ORCL', 'intel': 'INTC', 'amd': 'AMD', 'uber': 'UBER',
+                'lyft': 'LYFT', 'airbnb': 'ABNB', 'zoom': 'ZM', 'slack': 'WORK',
+                'twitter': 'TWTR', 'snapchat': 'SNAP', 'pinterest': 'PINS',
+                'square': 'SQ', 'paypal': 'PYPL', 'visa': 'V', 'mastercard': 'MA',
+                'jpmorgan': 'JPM', 'goldman': 'GS', 'morgan stanley': 'MS',
+                'bank of america': 'BAC', 'wells fargo': 'WFC', 'coca cola': 'KO',
+                'pepsi': 'PEP', 'walmart': 'WMT', 'target': 'TGT', 'costco': 'COST',
+                'home depot': 'HD', 'lowes': 'LOW', 'disney': 'DIS', 'boeing': 'BA',
+                'caterpillar': 'CAT', 'ge': 'GE', 'general electric': 'GE'
             }
             
             company_lower = company_name.lower().strip()
@@ -357,7 +343,7 @@ After-Hours: 4:00 PM - 8:00 PM ET"""
     def ask_question(self, question: str, user_context: Dict = None) -> Dict[str, Any]:
         """Process user question through the agent"""
         try:
-            print(f"Processing question: {question}")
+            print(f"Processing question with LLM-powered FAQ backend: {question}")
             
             # Add user context if provided
             if user_context:
@@ -379,16 +365,18 @@ After-Hours: 4:00 PM - 8:00 PM ET"""
             return {
                 'success': True,
                 'response': agent_response,
-                'agent_type': 'faq_market_agent',
+                'agent_type': 'faq_market_agent_llm_powered',
                 'tools_available': [tool.name for tool in self.tools],
                 'conversation_length': len(chat_history),
                 'capabilities': [
-                    'TradeUP FAQ search and answers',
+                    'LLM-powered TradeUP FAQ search and intelligent responses',
                     'Real-time stock quotes and prices',
                     'Market overview and indices',
                     'Stock news and company information',
                     'Company name to symbol lookup',
-                    'Conversation memory and context'
+                    'Conversation memory and context',
+                    'Smart synthesis of multiple FAQ sources',
+                    'Intelligent follow-up question suggestions'
                 ]
             }
             
@@ -424,30 +412,57 @@ After-Hours: 4:00 PM - 8:00 PM ET"""
         """Clear conversation memory"""
         self.memory.clear()
         print("Conversation memory cleared")
+    
+    def get_faq_system_stats(self) -> Dict[str, Any]:
+        """Get statistics from the underlying LLM-powered FAQ system"""
+        try:
+            return {
+                'faq_system_type': 'LLMPoweredOptimizedFAQSystem',
+                'cache_stats': self.faq_system.get_cache_stats(),
+                'llm_powered': True,
+                'features': [
+                    'LLM intelligence for comprehensive responses',
+                    'Response caching for speed',
+                    'Smart routing between FAQ and market',
+                    'Conversation context',
+                    'Multi-source FAQ synthesis'
+                ]
+            }
+        except Exception as e:
+            return {'error': f'Could not get FAQ system stats: {str(e)}'}
 
 # Example usage and testing
 if __name__ == "__main__":
-    # Initialize the agent
+    # Initialize the agent with LLM-powered FAQ system
     agent = FAQMarketAgent()
     
     # Test questions that combine FAQ and market data
     test_questions = [
-        "What are TradeUP's trading fees?",
-        "What's the current price of Apple stock?",
-        "Can I trade options on TradeUP and what's Tesla's stock price?",
-        "How do I open an account and what's the market doing today?",
-        "What's the news on Microsoft stock?",
-        "What symbol does Netflix use?"
+        "What are TradeUP's trading fees?",  # Should use LLM-powered FAQ
+        "What's the current price of Apple stock?",  # Should use market tools
+        "Can I trade options on TradeUP and what's Tesla's stock price?",  # Should use both
+        "How do I open an account and what's the market doing today?",  # Should use both
+        "What's the news on Microsoft stock?",  # Should use market tools
+        "What symbol does Netflix use?",  # Should use market tools
+        "How do I fund my account?",  # Should use LLM-powered FAQ
+        "What are the margin requirements?"  # Should use LLM-powered FAQ
     ]
     
-    print("Testing FAQ + Market Data Agent...")
-    print("=" * 60)
+    print("Testing FAQ + Market Data Agent with LLM-powered FAQ system...")
+    print("=" * 70)
     
     for question in test_questions:
         print(f"\nQ: {question}")
         result = agent.ask_question(question)
         if result['success']:
             print(f"A: {result['response']}")
+            print(f"System: {result['agent_type']}")
         else:
             print(f"Error: {result['error']}")
         print("-" * 50)
+    
+    # Show FAQ system stats
+    print(f"\nFAQ System Statistics:")
+    faq_stats = agent.get_faq_system_stats()
+    for key, value in faq_stats.items():
+        print(f"  {key}: {value}")
