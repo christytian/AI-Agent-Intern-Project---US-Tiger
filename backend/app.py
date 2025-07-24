@@ -1,11 +1,19 @@
 # app.py - TradeUP FAQ App - CLEANED VERSION with Essential Swagger Documentation
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_restx import Api, Resource, fields
+from flask_cors import CORS
 import json
 import os
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import numpy as np
+from typing import List, Dict, Any, Optional
+import re
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 APP_STARTUP_TIME = datetime.now(timezone.utc)
 print(f"🚀 App started at: {APP_STARTUP_TIME.isoformat()}")
@@ -19,19 +27,28 @@ from optimized_faq_system import LLMPoweredOptimizedFAQSystem
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
+# Enable CORS for React frontend
+CORS(app, origins=[
+    'http://localhost:3000',  # React development server
+    'http://localhost:3001',  # Alternative React port
+    'https://your-production-domain.com'  # Add your production domain
+], supports_credentials=True)
+
+# Import FAQ Market Agent (FIXED IMPORT PATH)
 try:
-    from faq_market_agent import FAQMarketAgent
+    from faq_market_agent import FAQMarketAgent  # Removed 'backend.' prefix
     faq_market_agent = None
-except ImportError:
-    print("Warning: FAQ Market Agent not available")
+    print("✅ FAQ Market Agent module imported successfully")
+except ImportError as e:
+    print(f"⚠️ Warning: FAQ Market Agent not available: {e}")
     faq_market_agent = None
 
 try:
     from supabase_memory import OptimalChatbotFAQ, create_chatbot
     supabase_faq_system = None
-    print("Supabase memory module imported successfully")
-except ImportError:
-    print("Warning: Supabase memory system not available")
+    print("✅ Supabase memory module imported successfully")
+except ImportError as e:
+    print(f"⚠️ Warning: Supabase memory system not available: {e}")
     supabase_faq_system = None
 
 # Initialize systems
@@ -49,30 +66,31 @@ def init_llm_powered_faq_system():
     global llm_powered_faq_system
     try:
         llm_powered_faq_system = LLMPoweredOptimizedFAQSystem()
-        print("LLM-Powered FAQ System loaded successfully")
+        print("✅ LLM-Powered FAQ System loaded successfully")
         return True
     except Exception as e:
-        print(f"Error loading LLM-Powered FAQ system: {e}")
+        print(f"❌ Error loading LLM-Powered FAQ system: {e}")
         return False
 
 def init_faq_market_agent():
     global faq_market_agent
     try:
+        print("🔄 Initializing FAQ Market Agent...")
         faq_market_agent = FAQMarketAgent(memory_window=10)
-        print("FAQ + Market Data Agent loaded successfully")
+        print("✅ FAQ + Market Data Agent loaded successfully")
         return True
     except Exception as e:
-        print(f"Error loading FAQ + Market Data Agent: {e}")
+        print(f"❌ Error loading FAQ + Market Data Agent: {e}")
         return False
 
 def init_supabase_faq_system():
     global supabase_faq_system
     try:
         supabase_faq_system = OptimalChatbotFAQ()
-        print(f"Supabase FAQ System loaded (memory: {supabase_faq_system.memory_enabled})")
+        print(f"✅ Supabase FAQ System loaded (memory: {supabase_faq_system.memory_enabled})")
         return True
     except Exception as e:
-        print(f"Error loading Supabase FAQ System: {e}")
+        print(f"❌ Error loading Supabase FAQ System: {e}")
         return False
 
 def convert_numpy_types(obj):
@@ -92,6 +110,7 @@ def convert_numpy_types(obj):
 def get_or_create_session(force_new_session=False):
     """
     Simplified session management that works reliably
+    Returns: (session_id, user_id) tuple
     """
     global APP_STARTUP_TIME
     
@@ -162,28 +181,229 @@ def cleanup_old_sessions_on_startup():
     except Exception as e:
         print(f"Warning: Could not clean up old sessions: {e}")
 
+def get_conversation_history(session_id):
+    """Get conversation history for session"""
+    try:
+        if supabase_faq_system and supabase_faq_system.memory_enabled and session_id:
+            # Get messages from Supabase
+            messages = supabase_faq_system.supabase.table('chat_messages').select('*').eq('session_id', session_id).order('created_at', desc=False).execute()
+            return messages.data if messages.data else []
+        return []
+    except Exception as e:
+        print(f"Error getting conversation history: {e}")
+        return []
+
+def store_message(session_id, content, message_type, user_id=None):
+    """Store message in database with proper user_id"""
+    try:
+        if supabase_faq_system and supabase_faq_system.memory_enabled and session_id:
+            # Get user_id from session if not provided
+            if not user_id:
+                _, user_id = get_or_create_session()
+            
+            message_data = {
+                'session_id': session_id,
+                'user_id': user_id,  # FIXED: Always include user_id
+                'content': content,
+                'message_type': message_type,
+                'created_at': datetime.now(timezone.utc).isoformat()
+            }
+            result = supabase_faq_system.supabase.table('chat_messages').insert(message_data).execute()
+            return result.data[0]['id'] if result.data else None
+        return None
+    except Exception as e:
+        print(f"Error storing message: {e}")
+        return None
+
+def get_search_suggestions_for_keyword(keyword):
+    """Get search suggestions when no results found"""
+    keyword_lower = keyword.lower()
+    
+    # Map keywords to related suggestions
+    suggestion_map = {
+        'tax': ['tax documents', 'tax forms', '1099', 'statements'],
+        'account': ['account opening', 'verification', 'documents', 'approval'],
+        'trading': ['trading fees', 'first trade', 'margin', 'options'],
+        'deposit': ['fund account', 'ACH transfer', 'wire transfer', 'money'],
+        'withdraw': ['withdrawal', 'cash out', 'transfer'],
+        'fee': ['trading fees', 'commissions', 'costs'],
+        'document': ['verification', 'identity', 'tax forms'],
+        'money': ['deposit', 'withdraw', 'funding', 'transfer']
+    }
+    
+    # Find related suggestions
+    suggestions = []
+    for key, values in suggestion_map.items():
+        if key in keyword_lower or keyword_lower in key:
+            suggestions.extend(values)
+    
+    # Add general suggestions if no specific matches
+    if not suggestions:
+        suggestions = ['account', 'trading', 'fees', 'tax', 'deposit', 'withdraw']
+    
+    return list(set(suggestions))  # Remove duplicates
+
+def get_quick_questions_by_keyword(keyword: str) -> list[str]:
+    """
+    SIMPLE and RELIABLE search for quick questions
+    """
+    try:
+        print(f"\n🔍 === SIMPLE SEARCH FOR: '{keyword}' ===")
+        
+        from optimized_faq_system import LLMPoweredOptimizedFAQSystem
+        faq_system = LLMPoweredOptimizedFAQSystem()
+        
+        # Get documents from vectorstore
+        docs_with_scores = faq_system.vectorstore.similarity_search_with_score(
+            keyword, 
+            k=50
+        )
+        
+        print(f"📊 Got {len(docs_with_scores)} documents from vectorstore")
+        
+        found_questions = []
+        seen_questions = set()
+        keyword_lower = keyword.lower()
+        
+        print(f"🔍 Looking for keyword '{keyword_lower}' in documents...")
+        
+        for i, (doc, score) in enumerate(docs_with_scores):
+            question = doc.metadata.get("question", "")
+            category = doc.metadata.get("category_name", "")
+            
+            if not question or question in seen_questions:
+                continue
+                
+            # SIMPLE matching - just check if keyword is anywhere
+            question_lower = question.lower()
+            category_lower = category.lower() if category else ""
+            
+            # Check multiple places for the keyword
+            keyword_found = (
+                keyword_lower in question_lower or
+                keyword_lower in category_lower or
+                # Special mappings for common searches
+                (keyword_lower == "tax" and ("tax" in question_lower or "tax" in category_lower)) or
+                (keyword_lower == "account" and ("account" in question_lower or "account" in category_lower)) or
+                (keyword_lower == "trading" and ("trading" in question_lower or "fees" in question_lower)) or
+                (keyword_lower == "deposit" and ("deposit" in question_lower or "fund" in question_lower))
+            )
+            
+            if keyword_found:
+                print(f"   ✅ FOUND: {question}")
+                print(f"      Category: {category}")
+                print(f"      Match in: {'question' if keyword_lower in question_lower else 'category'}")
+                
+                found_questions.append(question)
+                seen_questions.add(question)
+                
+                # Stop at 3 results as requested
+                if len(found_questions) >= 3:
+                    break
+        
+        print(f"\n✅ FINAL RESULTS: {len(found_questions)} questions found")
+        for i, q in enumerate(found_questions, 1):
+            print(f"   {i}. {q}")
+        
+        print("=== END SIMPLE SEARCH ===\n")
+        
+        return found_questions
+        
+    except Exception as e:
+        print(f"❌ Error in simple search: {e}")
+        import traceback
+        traceback.print_exc()
+        return []
+
+def get_related_terms(keyword: str) -> list[str]:
+    """
+    Enhanced related terms for better matching
+    """
+    related_terms = {
+        'tax': ['taxes', '1099', 'taxation', 'tax form', 'tax document', 'tax reporting', 
+                'irs', 'filing', 'tax year', 'tax return', 'statement', 'turbotax', 
+                'consolidated', 'reportable', 'tax event'],
+        'account': ['accounts', 'registration', 'sign up', 'open', 'opening', 'statements'],
+        'trading': ['trade', 'trades', 'buy', 'sell', 'trading', 'transaction'],
+        'deposit': ['deposits', 'fund', 'funding', 'money', 'transfer', 'cash'],
+        'withdraw': ['withdrawal', 'withdrawals', 'cash out', 'wire'],
+        'margin': ['leverage', 'buying power', 'margin account'],
+        'options': ['option', 'call', 'put', 'derivatives'],
+        'fee': ['fees', 'commission', 'commissions', 'cost', 'costs', 'pricing'],
+        'verify': ['verification', 'identity', 'documents', 'document', 'forms'],
+        'statement': ['statements', 'account statement', 'monthly', 'quarterly']
+    }
+    
+    return related_terms.get(keyword, [])
+
+def should_use_market_agent(query: str) -> bool:
+    """
+    Determine if query should use market agent based on keywords
+    """
+    query_lower = query.lower()
+    
+    # Stock-related keywords
+    stock_keywords = [
+        'stock price', 'share price', 'current price', 'price of',
+        'quote', 'ticker', 'stock quote', 'market price',
+        'stock news', 'company news', 'earnings',
+        'market overview', 'market status', 'indices',
+        'nasdaq', 'dow jones', 's&p 500', 'nyse',
+        'apple stock', 'tesla stock', 'microsoft stock',
+        'aapl', 'tsla', 'msft', 'googl', 'amzn', 'nvda', 'meta'
+    ]
+    
+    # Company names that typically indicate stock queries
+    company_names = [
+        'apple', 'microsoft', 'google', 'amazon', 'tesla', 
+        'nvidia', 'meta', 'facebook', 'netflix', 'adobe',
+        'salesforce', 'oracle', 'intel', 'amd', 'uber'
+    ]
+    
+    # Check for stock keywords
+    for keyword in stock_keywords:
+        if keyword in query_lower:
+            return True
+    
+    # Check for company names with stock-related context
+    for company in company_names:
+        if company in query_lower and any(word in query_lower for word in ['stock', 'price', 'share', 'quote', 'news']):
+            return True
+    
+    # Check for ticker symbol patterns (3-4 uppercase letters)
+    ticker_pattern = r'\b[A-Z]{2,5}\b'
+    if re.search(ticker_pattern, query):
+        return True
+    
+    return False
+
 # ============================================================================
 # CORE ROUTES - ESSENTIAL FOR FUNCTIONALITY
 # ============================================================================
 
 @app.route('/')
 def home():
-    """Serve the main chat interface"""
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        print(f"Template error: {e}")
-        return jsonify({
-            'message': 'TradeUP Enhanced LLM-Powered FAQ API is running',
-            'status': 'active',
-            'version': '4.1',
-            'endpoints': {
-                'main_faq': '/api/ask',
-                'quick_questions': '/api/quick-questions',
-                'stats': '/api/stats',
-                'health': '/health'
-            }
-        })
+    """API status endpoint (no template serving)"""
+    return jsonify({
+        'message': 'Tiger Securities Enhanced LLM-Powered FAQ API',
+        'status': 'active',
+        'version': '4.1',
+        'frontend': 'React (separate application)',
+        'backend': 'Flask API',
+        'endpoints': {
+            'main_faq': '/api/ask',
+            'quick_questions': '/api/quick-questions',
+            'stats': '/api/stats',
+            'health': '/health',
+            'docs': '/docs/'
+        }
+    })
+
+# Serve static files (like logo) for React frontend
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Serve static files for React frontend"""
+    return send_from_directory('static', filename)
 
 @app.route('/health')
 def health_check():
@@ -191,7 +411,7 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
-        'message': 'TradeUP Enhanced FAQ App is running',
+        'message': 'Tiger Securities Enhanced FAQ App is running',
         'version': '4.1',
         'systems': {
             'enhanced_llm_faq_system': {
@@ -210,107 +430,167 @@ def health_check():
 
 @app.route('/api/ask', methods=['POST'])
 def ask_question():
-    """Main FAQ endpoint - handles all questions with LLM intelligence"""
+    """
+    Enhanced ask endpoint with market agent integration
+    """
     try:
-        start_time = datetime.now()
         data = request.get_json()
-        question = data.get('question', '').strip()
-        force_new_session = data.get('new_session', False)
+        if not data or 'question' not in data:
+            return jsonify({'error': 'No question provided'}), 400
         
-        if not question:
-            return jsonify({'success': False, 'error': 'No question provided'}), 400
+        user_question = data['question'].strip()
+        if not user_question:
+            return jsonify({'error': 'Empty question'}), 400
         
-        global processing_stats
-        processing_stats["total_questions"] += 1
+        print(f"Processing question: {user_question}")
         
-        # Primary: Supabase system with conversation memory
-        if supabase_faq_system:
-            try:
-                session_id, user_id = get_or_create_session(force_new_session=force_new_session)
-                conversation_history = []
-                if session_id:
-                    conversation_history = supabase_faq_system.get_session_history(session_id)
-                
-                result = supabase_faq_system.ask_question(question, user_id, session_id)
-                
-                if result['success']:
-                    processing_stats["faq_questions"] += 1
-                    analysis_data = convert_numpy_types(result.get('analysis', {}))
-                    
-                    session_debug = {}
-                    if session_id:
-                        current_question_count = supabase_faq_system.get_user_question_count_current_session(session_id)
-                        total_question_count = supabase_faq_system.get_user_question_count_all_sessions(user_id)
-                        session_debug = {
-                            'current_session_questions': current_question_count,
-                            'total_all_sessions': total_question_count,
-                            'conversation_history_length': len(conversation_history)
-                        }
-                    
-                    return jsonify({
-                        'success': True,
-                        'response': result['response'],
-                        'system_used': 'supabase_with_memory',
-                        'enhanced_llm': True,
-                        'memory_enabled': result['memory_enabled'],
-                        'session_id': result['session_id'],
-                        'intent': result.get('intent', 'general'),
-                        'sources_count': result.get('sources_count', 0),
-                        'categories': result.get('categories', []),
-                        'suggested_questions': result.get('suggested_questions', []),
-                        'analysis': analysis_data,
-                        'session_debug': session_debug,
-                        'processing_time': (datetime.now() - start_time).total_seconds()
-                    })
-                    
-            except Exception as e:
-                print(f"Supabase system error: {e}")
+        # Check if question should use market agent
+        use_market_agent_flag = should_use_market_agent(user_question)
         
-        # Fallback: Enhanced LLM FAQ System
-        if llm_powered_faq_system:
-            try:
-                result = llm_powered_faq_system.get_smart_response(question, conversation_history=[])
-                processing_stats["llm_analysis_calls"] += 1
+        if use_market_agent_flag and faq_market_agent:  # FIXED: was 'market_agent'
+            print("🎯 Routing to FAQ Market Agent")
+            
+            # Use the market agent
+            market_result = faq_market_agent.ask_question(user_question)  # FIXED: was 'market_agent'
+            
+            if market_result['success']:
+                # Store the conversation in your database
+                session_id, user_id = get_or_create_session()  # FIXED: returns tuple
                 
-                if result.get('use_market_agent', False):
-                    processing_stats["market_questions"] += 1
-                    return jsonify({
-                        'success': True,
-                        'response': f"This question requires real-time market data. {result.get('analysis', {}).get('reasoning', '')}",
-                        'system_used': 'routing_fallback',
-                        'enhanced_llm': True,
-                        'processing_time': (datetime.now() - start_time).total_seconds()
-                    })
+                # Store user question
+                store_message(session_id, user_question, 'human')
                 
-                processing_stats["faq_questions"] += 1
-                if result.get('from_cache'):
-                    processing_stats["cache_hits"] += 1
+                # Store agent response
+                store_message(session_id, market_result['response'], 'ai')
                 
                 return jsonify({
                     'success': True,
-                    'response': result['response'],
-                    'system_used': 'enhanced_llm_faq_fallback',
-                    'enhanced_llm': True,
-                    'memory_enabled': False,
-                    'analysis': convert_numpy_types(result.get('analysis', {})),
-                    'processing_time': result['processing_time'],
-                    'sources_count': int(result['num_sources']),
-                    'categories': result['categories_used'],
-                    'suggested_questions': result['suggested_questions']
+                    'response': market_result['response'],
+                    'agent_type': 'faq_market_agent',
+                    'capabilities': market_result.get('capabilities', []),
+                    'tools_used': market_result.get('tools_available', []),
+                    'conversation_length': market_result.get('conversation_length', 0),
+                    'session_id': session_id,
+                    'processing_time': 0,  # Market agent handles its own timing
+                    'suggested_questions': [
+                        "What's the current market overview?",
+                        "How do I place a stock trade?", 
+                        "What are trading fees?",
+                        "Can I get real-time quotes?"
+                    ]
                 })
-                
-            except Exception as e:
-                print(f"Enhanced LLM FAQ system error: {e}")
+            else:
+                # Fall back to regular FAQ if market agent fails
+                print("⚠️ Market agent failed, falling back to FAQ system")
+                use_market_agent_flag = False
         
+        if not use_market_agent_flag:
+            print("🔍 Routing to FAQ System")
+            
+            # Get conversation history
+            session_id, user_id = get_or_create_session()  # FIXED: returns tuple
+            conversation_history = get_conversation_history(session_id)
+            
+            # Use your existing FAQ system logic
+            print("Processing as FAQ question with enhanced LLM system")
+            result = llm_powered_faq_system.get_smart_response(user_question, conversation_history)  # FIXED: was 'enhanced_llm_faq_system'
+            
+            # Store messages
+            store_message(session_id, user_question, 'human', user_id)
+            store_message(session_id, result['response'], 'ai', user_id)
+            
+            # FIXED: Apply convert_numpy_types to handle float32 serialization
+            response_data = {
+                'success': True,
+                'response': result['response'],
+                'agent_type': 'faq_system',
+                'num_sources': result.get('num_sources', 0),
+                'sources': result.get('sources', []),
+                'suggested_questions': result.get('suggested_questions', []),
+                'processing_time': result.get('processing_time', 0),
+                'session_id': session_id,
+                'source_attribution': result.get('source_attribution', 'AI Assistant'),
+                'categories_used': result.get('categories_used', [])
+            }
+        
+            # Convert numpy types to JSON-serializable types
+            response_data = convert_numpy_types(response_data)
+                
+            return jsonify(response_data)
+            
+    except Exception as e:
+        logger.error(f"Error processing question: {str(e)}")
         return jsonify({
             'success': False,
-            'error': 'No FAQ systems available'
+            'error': f'Processing error: {str(e)}',
+            'fallback_response': 'I apologize for the technical difficulty. Please try rephrasing your question.'
         }), 500
+
+@app.route('/api/test-market-agent', methods=['POST'])
+def test_market_agent():
+    """
+    Test endpoint specifically for market agent
+    """
+    try:
+        if not faq_market_agent:  # FIXED: was 'market_agent'
+            return jsonify({
+                'success': False,
+                'error': 'Market agent not available'
+            }), 503
+        
+        data = request.get_json()
+        question = data.get('question', '').strip()
+        
+        if not question:
+            return jsonify({'error': 'No question provided'}), 400
+        
+        result = faq_market_agent.ask_question(question)  # FIXED: was 'market_agent'
+        
+        return jsonify({
+            'success': result['success'],
+            'response': result.get('response', ''),
+            'agent_type': result.get('agent_type', ''),
+            'error': result.get('error', ''),
+            'capabilities': result.get('capabilities', [])
+        })
         
     except Exception as e:
         return jsonify({
             'success': False,
-            'error': f'Error processing question: {str(e)}'
+            'error': str(e)
+        }), 500
+
+@app.route('/api/market-agent-stats', methods=['GET'])
+def get_market_agent_stats():
+    """
+    Get market agent statistics and capabilities
+    """
+    try:
+        if faq_market_agent:  # FIXED: was 'market_agent'
+            stats = faq_market_agent.get_faq_system_stats()
+            return jsonify({
+                'success': True,
+                'market_agent_available': True,
+                'stats': stats,
+                'capabilities': [
+                    'Tiger Securities FAQ search with LLM intelligence',
+                    'Real-time stock quotes and prices', 
+                    'Market overview and major indices',
+                    'Stock news and company information',
+                    'Company name to ticker symbol lookup',
+                    'Conversation memory and context'
+                ]
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'market_agent_available': False,
+                'error': 'Market agent not initialized'
+            })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
         }), 500
 
 @app.route('/api/stats')
@@ -359,21 +639,117 @@ def get_stats():
             'error': str(e)
         }), 500
 
-@app.route('/api/quick-questions')
+@app.route('/api/quick-questions', methods=['GET'])
 def get_quick_questions():
-    """Get predefined quick questions for UI"""
-    quick_questions = [
-        "How do I open a TradeUP account?",
-        "What are the trading fees and commissions?",
-        "How do I fund my trading account?",
-        "What documents do I need to get started?",
-        "How do I place my first trade?",
-        "What are the margin requirements?",
-        "Can I trade during extended hours?",
-        "How do I withdraw money from my account?"
-    ]
-    return jsonify(quick_questions)
+    """
+    Get quick questions - sample questions by default, database search with keyword
+    """
+    try:
+        keyword = request.args.get('keyword', '').strip()
+        
+        if keyword:
+            print(f"🔍 Database search for: '{keyword}'")
+            # Search the database for relevant questions
+            questions = get_quick_questions_by_keyword(keyword)
+            
+            if questions:
+                return jsonify({
+                    'success': True,
+                    'questions': questions,
+                    'keyword': keyword,
+                    'count': len(questions),
+                    'message': f"Found {len(questions)} relevant questions"
+                })
+            else:
+                return jsonify({
+                    'success': True,
+                    'questions': [],
+                    'keyword': keyword,
+                    'count': 0,
+                    'message': f"No questions found for '{keyword}'. Try: tax, account, trading, fees"
+                })
+        else:
+            # Return sample questions (not from database)
+            sample_questions = [
+                "How do I open a Tiger Securities account?",
+                "What documents do I need to verify my identity?",
+                "What are the trading fees and commissions?",
+                "How do I deposit money into my account?",
+                "What are the different account types available?",
+                "How long does account approval take?"
+            ]
+            
+            return jsonify({
+                'success': True,
+                'questions': sample_questions,
+                'keyword': None,
+                'count': len(sample_questions),
+                'message': "Sample quick questions"
+            })
+            
+    except Exception as e:
+        print(f"❌ Error in get_quick_questions: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'questions': [],
+            'message': "Error retrieving quick questions"
+        }), 500
 
+@app.route('/api/debug-vectorstore', methods=['GET'])
+def debug_vectorstore():
+    """Debug endpoint to check what's in the vectorstore"""
+    try:
+        from optimized_faq_system import LLMPoweredOptimizedFAQSystem
+        faq_system = LLMPoweredOptimizedFAQSystem()
+        
+        # Get some sample documents
+        sample_docs = faq_system.vectorstore.similarity_search("tax", k=20)
+        
+        result = {
+            'total_docs_found': len(sample_docs),
+            'sample_docs': []
+        }
+        
+        for i, doc in enumerate(sample_docs[:10]):
+            result['sample_docs'].append({
+                'index': i,
+                'question': doc.metadata.get("question", "No question"),
+                'category': doc.metadata.get("category_name", "No category"),
+                'content_preview': doc.page_content[:100] + "..."
+            })
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'error': str(e),
+            'message': 'Failed to debug vectorstore'
+        }), 500
+
+@app.route('/api/test-search/<keyword>')
+def test_search(keyword):
+    """Test the search function directly"""
+    try:
+        print(f"🧪 Testing search for: {keyword}")
+        results = get_quick_questions_by_keyword(keyword)
+        
+        return jsonify({
+            'success': True,
+            'keyword': keyword,
+            'results': results,
+            'count': len(results),
+            'message': f"Direct search test for '{keyword}'"
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'keyword': keyword,
+            'error': str(e),
+            'results': []
+        }), 500
+    
 @app.route('/api/search-faqs', methods=['POST'])
 def search_faqs():
     """Search through FAQ database using keywords"""
@@ -387,16 +763,16 @@ def search_faqs():
         
         # Your existing FAQ database search logic here
         faq_database = [
-            {"question": "How do I open a TradeUP account?", "category": "Account", "keywords": ["account", "open", "new", "start"], "answer": "To open a TradeUP account, visit our website and click 'Sign Up'. You'll need to provide personal information and verify your identity."},
+            {"question": "How do I open a Tiger Securities account?", "category": "Account", "keywords": ["account", "open", "new", "start"], "answer": "To open a Tiger Securities account, visit our website and click 'Sign Up'. You'll need to provide personal information and verify your identity."},
             {"question": "What documents do I need to get started?", "category": "Account", "keywords": ["documents", "required", "verification", "id"], "answer": "You need a government-issued ID, Social Security number, and proof of address to get started."},
-            {"question": "What are the trading fees and commissions?", "category": "Fees", "keywords": ["fees", "commission", "cost", "price"], "answer": "TradeUP offers commission-free stock trading. Some premium features may have fees."},
+            {"question": "What are the trading fees and commissions?", "category": "Fees", "keywords": ["fees", "commission", "cost", "price"], "answer": "Tiger Securities offers commission-free stock trading. Some premium features may have fees."},
             {"question": "How do I fund my trading account?", "category": "Funding", "keywords": ["fund", "deposit", "money", "transfer"], "answer": "You can fund your account via ACH transfer, wire transfer, or mobile check deposit."},
             {"question": "How do I withdraw money from my account?", "category": "Funding", "keywords": ["withdraw", "withdrawal", "money", "cash"], "answer": "Withdrawals can be made through ACH transfer to your linked bank account, usually taking 1-3 business days."},
             {"question": "How do I place my first trade?", "category": "Trading", "keywords": ["trade", "first", "buy", "sell"], "answer": "To place your first trade, search for a stock, select the number of shares, choose your order type, and confirm the trade."},
             {"question": "What are the margin requirements?", "category": "Trading", "keywords": ["margin", "requirements", "leverage"], "answer": "Margin trading requires a minimum account balance of $2,000 and approval for margin privileges."},
-            {"question": "Can I trade during extended hours?", "category": "Trading", "keywords": ["extended", "hours", "after", "pre"], "answer": "Yes, TradeUP offers extended hours trading from 4:00 AM to 8:00 PM ET."},
+            {"question": "Can I trade during extended hours?", "category": "Trading", "keywords": ["extended", "hours", "after", "pre"], "answer": "Yes, Tiger Securities offers extended hours trading from 4:00 AM to 8:00 PM ET."},
             {"question": "What is a cash account?", "category": "Account", "keywords": ["cash", "account", "type"], "answer": "A cash account requires you to pay for securities purchases in full and doesn't allow borrowing."},
-            {"question": "What is a margin account?", "category": "Account", "keywords": ["margin", "account", "borrowing"], "answer": "A margin account allows you to borrow money from TradeUP to purchase securities."},
+            {"question": "What is a margin account?", "category": "Account", "keywords": ["margin", "account", "borrowing"], "answer": "A margin account allows you to borrow money from Tiger Securities to purchase securities."},
             {"question": "How do I set up two-factor authentication?", "category": "Security", "keywords": ["2fa", "security", "authentication"], "answer": "Enable 2FA in your account settings for enhanced security."},
             {"question": "What are fractional shares?", "category": "Trading", "keywords": ["fractional", "partial", "shares"], "answer": "Fractional shares allow you to buy portions of expensive stocks with smaller amounts of money."},
         ]
@@ -670,14 +1046,51 @@ def get_session_feedback_summary(session_id):
             'success': False, 
             'error': 'Failed to get session feedback summary'
         }), 500
+
+@app.route('/ws')
+def websocket_endpoint():
+    """Handle React development server WebSocket requests properly"""
+    # Check if it's a WebSocket upgrade request
+    if request.headers.get('Upgrade', '').lower() == 'websocket':
+        # This is a WebSocket upgrade request - we can't handle it properly
+        # Return a 501 Not Implemented instead of 400
+        return jsonify({
+            'error': 'WebSocket not implemented',
+            'message': 'This endpoint does not support WebSocket connections'
+        }), 501
     
+    # Regular HTTP request to /ws
+    return jsonify({
+        'message': 'WebSocket endpoint - React development feature',
+        'status': 'http_only',
+        'note': 'WebSocket upgrades not supported'
+    }), 200
+
+
+# Add this logging filter to completely hide WebSocket noise
+import logging
+
+class CleanLoggingFilter(logging.Filter):
+    def filter(self, record):
+        message = record.getMessage()
+        # Filter out WebSocket and other development noise
+        if any(pattern in message for pattern in ['/ws', 'WebSocket', 'websocket']):
+            return False
+        return True
+
+# Apply clean logging
+werkzeug_logger = logging.getLogger('werkzeug')
+werkzeug_logger.addFilter(CleanLoggingFilter())
+werkzeug_logger.setLevel(logging.WARNING)  # Only show warnings and errors
+
+
 # ============================================================================
 # SWAGGER API DOCUMENTATION
-# ========@====================================================================
+# ============================================================================
 
-api = Api(app, doc='/docs/', title='TradeUP Enhanced LLM FAQ API', 
+api = Api(app, doc='/docs/', title='Tiger Securities Enhanced LLM FAQ API', 
          description='''
-## TradeUP Enhanced FAQ System with Advanced LLM Intelligence
+## Tiger Securities Enhanced FAQ System with Advanced LLM Intelligence
 
 This API provides intelligent customer service responses using advanced LLM technology.
 
@@ -701,7 +1114,7 @@ This API provides intelligent customer service responses using advanced LLM tech
 
 # Define models for Swagger documentation
 ask_model = api.model('Question', {
-    'question': fields.String(required=True, description='Customer question', example='How do I open a TradeUP account?'),
+    'question': fields.String(required=True, description='Customer question', example='How do I open a Tiger Securities account?'),
     'new_session': fields.Boolean(required=False, description='Force create new session', example=False)
 })
 
@@ -769,7 +1182,7 @@ feedback_request_model = api.model('FeedbackRequest', {
     'feedback_type': fields.String(required=True, description='Feedback type', enum=['up', 'down'], example='up'),
     'session_id': fields.String(required=True, description='Session identifier', example='123e4567-e89b-12d3-a456-426614174000'),
     'user_id': fields.String(required=False, description='User identifier', example='user_20250723_142830'),
-    'answer_preview': fields.String(description='Preview of the answer provided', example='To open a TradeUP account...'),
+    'answer_preview': fields.String(description='Preview of the answer provided', example='To open a Tiger Securities account...'),
     'system_used': fields.String(description='Which system provided the answer', example='supabase_with_memory'),
     'categories': fields.List(fields.String, description='FAQ categories involved', example=['account', 'opening']),
     'sources_count': fields.Integer(description='Number of sources used', example=3)
@@ -1030,7 +1443,7 @@ def test_page():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>TradeUP FAQ API Tester</title>
+        <title>Tiger Securities FAQ API Tester</title>
         <style>
             body { font-family: Arial; max-width: 900px; margin: 40px auto; padding: 20px; }
             .endpoint { background: #f8f9fa; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #007bff; }
@@ -1048,7 +1461,7 @@ def test_page():
         </style>
     </head>
     <body>
-        <h1>TradeUP FAQ API Tester</h1>
+        <h1>Tiger Securities FAQ API Tester</h1>
         <div class="nav">
             <a href="/docs/">📚 API Documentation</a> | 
             <a href="/">🏠 Main App</a> | 
@@ -1058,9 +1471,17 @@ def test_page():
         <div class="endpoint">
             <h3>🤖 POST /api/ask - Enhanced LLM FAQ</h3>
             <p>Ask questions with advanced LLM intelligence and conversation memory.</p>
-            <input type="text" id="question" placeholder="Enter your question" value="How do I open a TradeUP account?">
+            <input type="text" id="question" placeholder="Enter your question" value="What's Apple stock price?">
             <button onclick="askQuestion()">Ask Question</button>
             <div id="askResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <div class="endpoint">
+            <h3>📈 POST /api/test-market-agent - Test Market Agent</h3>
+            <p>Test the market agent specifically for stock questions.</p>
+            <input type="text" id="marketQuestion" placeholder="Enter market question" value="What's Tesla stock price?">
+            <button onclick="testMarketAgent()">Test Market Agent</button>
+            <div id="marketResponse" class="response" style="display:none;"></div>
         </div>
         
         <div class="endpoint">
@@ -1077,63 +1498,6 @@ def test_page():
             <div id="quickResponse" class="response" style="display:none;"></div>
         </div>
 
-        <div class="endpoint">
-            <h3>🔍 POST /api/search-faqs - FAQ Database Search</h3>
-            <p>Search through the entire FAQ database using keywords.</p>
-            <input type="text" id="searchQuery" placeholder="Enter search query" value="account">
-            <input type="number" id="searchLimit" placeholder="Limit" value="5" style="width: 80px;">
-            <button onclick="searchFAQs()">Search FAQs</button>
-            <div id="searchResponse" class="response" style="display:none;"></div>
-        </div>
-
-        <div class="endpoint">
-            <h3>💡 GET /api/search-suggestions - Search Suggestions</h3>
-            <p>Get suggested search terms for FAQ topics.</p>
-            <button onclick="getSearchSuggestions()">Get Suggestions</button>
-            <div id="suggestionsResponse" class="response" style="display:none;"></div>
-        </div>
-
-        <h2>👍👎 Feedback System Testing</h2>
-
-        <div class="endpoint feedback-section">
-            <h3>👍 POST /api/feedback - Submit User Feedback</h3>
-            <p>Submit thumbs up/down feedback for FAQ responses.</p>
-            <textarea id="feedbackQuestion" placeholder="Enter question" rows="2">How do I open an account?</textarea><br>
-            <input type="text" id="feedbackSessionId" placeholder="Session ID (will auto-fill)" value="" style="width: 45%;"><br>
-            <input type="text" id="feedbackUserId" placeholder="User ID (will auto-fill)" value="" style="width: 45%;"><br>
-            <select id="feedbackType" style="width: 30%;">
-                <option value="up">👍 Thumbs Up</option>
-                <option value="down">👎 Thumbs Down</option>
-            </select>
-            <input type="text" id="feedbackSystem" placeholder="System Used" value="supabase_with_memory" style="width: 35%;"><br>
-            <button onclick="loadSessionInfoAndSubmit()">Get Session Info & Submit Feedback</button>
-            <div id="feedbackTestResponse" class="response" style="display:none;"></div>
-        </div>
-
-        <div class="endpoint feedback-section">
-            <h3>📊 GET /api/feedback/stats - Feedback Statistics</h3>
-            <p>Get comprehensive feedback analytics and satisfaction rates.</p>
-            <button onclick="getFeedbackStats()">Get Feedback Stats</button>
-            <div id="feedbackStatsResponse" class="response" style="display:none;"></div>
-        </div>
-
-        <div class="endpoint feedback-section">
-            <h3>👤 GET /api/feedback/user/{user_id} - User Feedback History</h3>
-            <p>Get feedback history for a specific user.</p>
-            <input type="text" id="userFeedbackId" placeholder="User ID" value="test_user_123" style="width: 60%;">
-            <input type="number" id="userFeedbackLimit" placeholder="Limit" value="10" style="width: 15%;">
-            <button onclick="getUserFeedback()">Get User Feedback</button>
-            <div id="userFeedbackResponse" class="response" style="display:none;"></div>
-        </div>
-
-        <div class="endpoint feedback-section">
-            <h3>🔗 GET /api/feedback/session/{session_id} - Session Feedback</h3>
-            <p>Get all feedback for a specific conversation session.</p>
-            <input type="text" id="sessionFeedbackId" placeholder="Session ID" value="123e4567-e89b-12d3-a456-426614174000">
-            <button onclick="getSessionFeedback()">Get Session Feedback</button>
-            <div id="sessionFeedbackResponse" class="response" style="display:none;"></div>
-        </div>
-
         <script>
             async function askQuestion() {
                 const question = document.getElementById('question').value;
@@ -1143,6 +1507,25 @@ def test_page():
                 
                 try {
                     const response = await fetch('/api/ask', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({question: question})
+                    });
+                    const data = await response.json();
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } catch (error) {
+                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
+                }
+            }
+            
+            async function testMarketAgent() {
+                const question = document.getElementById('marketQuestion').value;
+                const responseDiv = document.getElementById('marketResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.innerHTML = '<p>📈 Testing market agent...</p>';
+                
+                try {
+                    const response = await fetch('/api/test-market-agent', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({question: question})
@@ -1181,149 +1564,6 @@ def test_page():
                     responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
                 }
             }
-
-            async function searchFAQs() {
-                const query = document.getElementById('searchQuery').value;
-                const limit = parseInt(document.getElementById('searchLimit').value) || 5;
-                const responseDiv = document.getElementById('searchResponse');
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>🔍 Searching FAQ database...</p>';
-                
-                try {
-                    const response = await fetch('/api/search-faqs', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({query: query, limit: limit})
-                    });
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            async function getSearchSuggestions() {
-                const responseDiv = document.getElementById('suggestionsResponse');
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>💡 Loading suggestions...</p>';
-                
-                try {
-                    const response = await fetch('/api/search-suggestions');
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            // FEEDBACK TESTING FUNCTIONS
-            async function submitTestFeedback() {
-                const question = document.getElementById('feedbackQuestion').value;
-                const sessionId = document.getElementById('feedbackSessionId').value;
-                const userId = document.getElementById('feedbackUserId').value;
-                const feedbackType = document.getElementById('feedbackType').value;
-                const systemUsed = document.getElementById('feedbackSystem').value;
-                const responseDiv = document.getElementById('feedbackTestResponse');
-                
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>👍 Submitting feedback...</p>';
-                
-                try {
-                    const response = await fetch('/api/feedback', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            question: question,
-                            feedback_type: feedbackType,
-                            session_id: sessionId,
-                            user_id: userId,
-                            answer_preview: "Test answer preview for feedback submission",
-                            system_used: systemUsed,
-                            categories: ['account', 'testing'],
-                            sources_count: 2
-                        })
-                    });
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            async function getFeedbackStats() {
-                const responseDiv = document.getElementById('feedbackStatsResponse');
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>📊 Loading feedback statistics...</p>';
-                
-                try {
-                    const response = await fetch('/api/feedback/stats');
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            async function getUserFeedback() {
-                const userId = document.getElementById('userFeedbackId').value;
-                const limit = document.getElementById('userFeedbackLimit').value;
-                const responseDiv = document.getElementById('userFeedbackResponse');
-                
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>👤 Loading user feedback history...</p>';
-                
-                try {
-                    const response = await fetch(`/api/feedback/user/${userId}?limit=${limit}`);
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            async function getSessionFeedback() {
-                const sessionId = document.getElementById('sessionFeedbackId').value;
-                const responseDiv = document.getElementById('sessionFeedbackResponse');
-                
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>🔗 Loading session feedback...</p>';
-                
-                try {
-                    const response = await fetch(`/api/feedback/session/${sessionId}`);
-                    const data = await response.json();
-                    responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error: ' + error + '</p>';
-                }
-            }
-
-            async function loadSessionInfoAndSubmit() {
-                const responseDiv = document.getElementById('feedbackTestResponse');
-                responseDiv.style.display = 'block';
-                responseDiv.innerHTML = '<p>🔄 Getting current session info...</p>';
-                
-                try {
-                    // First, get current session info
-                    const sessionResponse = await fetch('/api/session-info');
-                    const sessionData = await sessionResponse.json();
-                    
-                    // Fill in the form with real session data
-                    document.getElementById('feedbackSessionId').value = sessionData.session_id || 'no-session';
-                    document.getElementById('feedbackUserId').value = sessionData.user_id || 'anonymous';
-                    
-                    responseDiv.innerHTML = '<p>✅ Session info loaded. Now submitting feedback...</p>';
-                    
-                    // Now submit the feedback
-                    setTimeout(() => {
-                        submitTestFeedback();
-                    }, 500);
-                    
-                } catch (error) {
-                    responseDiv.innerHTML = '<p>❌ Error getting session info: ' + error + '</p>';
-                }
-            }
-
-            // Keep the existing submitTestFeedback function unchanged
         </script>
     </body>
     </html>
@@ -1386,7 +1626,7 @@ def clear_cache():
 # ============================================================================
 
 if __name__ == '__main__':
-    print("Starting TradeUP Enhanced LLM-Powered FAQ App...")
+    print("Starting Tiger Securities Enhanced LLM-Powered FAQ App...")
     
     # Initialize systems
     enhanced_llm_loaded = init_llm_powered_faq_system()
@@ -1402,21 +1642,23 @@ if __name__ == '__main__':
         print(f"🕐 App startup: {APP_STARTUP_TIME.isoformat()}")
         print(f"✅ Auto-fresh sessions enabled")
         
-        print(f"\n📡 Available endpoints:")
-        print(f"   🏠 Main App: http://localhost:8000/")
-        print(f"   📚 API Documentation: http://localhost:8000/docs/")
-        print(f"   🧪 API Tester: http://localhost:8000/test")
+        print(f"\n📡 API endpoints available at:")
         print(f"   💓 Health: http://localhost:8000/health")
+        print(f"   📚 API Documentation: http://localhost:8000/docs/")
         print(f"   🤖 FAQ API: http://localhost:8000/api/ask")
+        print(f"   📈 Market Agent Test: http://localhost:8000/api/test-market-agent")
         print(f"   📊 Stats: http://localhost:8000/api/stats")
-        print(f"   ⚡ Quick Questions: http://localhost:8000/api/quick-questions")
-        print(f"   👍 Feedback API: http://localhost:8000/api/feedback")
-        print(f"   📈 Feedback Stats: http://localhost:8000/api/feedback/stats")
+        print(f"   👍 Feedback: http://localhost:8000/api/feedback")
+        print(f"   🧪 Test Page: http://localhost:8000/test")
         
-        print(f"\n🎛️ Optional (dev/debug):")
-        print(f"   🆕 New Session: http://localhost:8000/api/new-session") 
-        print(f"   📋 Session Info: http://localhost:8000/api/session-info")
-        print(f"   🧹 Clear Cache: http://localhost:8000/api/clear-cache")
+        print(f"\n🎨 React Frontend should run on: http://localhost:3000")
+        print(f"   (Start with: cd frontend && npm start)")
+        
+        # Show system status
+        print(f"\n🔧 System Status:")
+        print(f"   ✅ LLM FAQ System: {'Loaded' if enhanced_llm_loaded else 'Not available'}")
+        print(f"   📈 Market Agent: {'Loaded' if market_loaded else 'Not available'}")
+        print(f"   💾 Supabase Memory: {'Loaded' if supabase_loaded else 'Not available'}")
         
         app.run(debug=True, host='0.0.0.0', port=8000)
     else:

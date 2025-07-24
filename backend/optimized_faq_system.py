@@ -10,6 +10,7 @@ from functools import lru_cache
 from datetime import datetime, timedelta
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor
+import re
 
 # Core libraries
 from langchain_community.vectorstores import FAISS
@@ -35,10 +36,10 @@ class LLMPoweredOptimizedFAQSystem:
                  openai_api_key: Optional[str] = None,
                  embedding_model: str = "text-embedding-3-small",
                  chat_model: str = "gpt-4o-mini",
-                 top_k: int = 6,  # Aggressive reduction for speed
-                 similarity_threshold: float = 0.12):  # Higher threshold for speed
+                 top_k: int = 8,
+                 similarity_threshold: float = 0.05):
         """
-        Initialize the Balanced Fast FAQ system
+        Initialize the Optimized FAQ system
         """
         self.vectorstore_path = Path(vectorstore_path)
         self.chat_model = chat_model
@@ -59,7 +60,7 @@ class LLMPoweredOptimizedFAQSystem:
             raise ValueError("OpenAI API key must be provided")
         
         # Initialize OpenAI client
-        self.client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        self.client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=15.0)
         
         # Initialize embeddings
         self.embeddings = OpenAIEmbeddings(model=embedding_model)
@@ -68,17 +69,17 @@ class LLMPoweredOptimizedFAQSystem:
         self.vectorstore = self._load_vectorstore()
         self.metadata = self._load_metadata()
         
-        # Enhanced caching (maintain quality for repeated queries)
+        # Enhanced caching
         self.response_cache = {}
         self.search_cache = {}
         
-        # Thread pool for parallel operations (speed improvement)
+        # Thread pool for parallel operations
         self.executor = ThreadPoolExecutor(max_workers=2)
         
-        # Pre-computed category mappings for faster initial routing
+        # Pre-computed category mappings for faster routing
         self.category_keywords = self._build_category_mappings()
         
-        logger.info("LLMPoweredOptimizedFAQSystem initialized - ultra fast optimizations for speed + accuracy")
+        logger.info("LLMPoweredOptimizedFAQSystem initialized - ultra fast optimizations")
     
     def _load_vectorstore(self) -> FAISS:
         """Load the saved FAISS vectorstore"""
@@ -107,7 +108,7 @@ class LLMPoweredOptimizedFAQSystem:
     def _build_category_mappings(self) -> Dict[str, List[str]]:
         """Pre-build category keyword mappings for faster routing"""
         return {
-            'account': ['account', 'open', 'new', 'registration', 'sign up', 'documents'],
+            'account': ['account', 'open', 'new', 'registration', 'sign up', 'documents', 'verify', 'identity'],
             'funding': ['deposit', 'withdraw', 'fund', 'money', 'transfer', 'ach', 'wire'],
             'trading': ['trade', 'trading', 'buy', 'sell', 'stock', 'equity'],
             'orders': ['order', 'limit', 'market', 'stop'],
@@ -136,7 +137,7 @@ class LLMPoweredOptimizedFAQSystem:
         """
         query_lower = query.lower()
         
-        # Fast routing for obvious cases (saves 2-3 seconds on 80% of queries)
+        # Fast routing for obvious cases
         if any(keyword in query_lower for keyword in self.category_keywords['market_data']):
             return {
                 "question_type": "market_data",
@@ -166,7 +167,7 @@ class LLMPoweredOptimizedFAQSystem:
                 "analysis_method": "fast_keyword"
             }
         
-        # Find best matching FAQ category (determines search strategy)
+        # Find best matching FAQ category
         best_category = None
         max_matches = 0
         
@@ -178,11 +179,11 @@ class LLMPoweredOptimizedFAQSystem:
                 max_matches = matches
                 best_category = category
         
-        # For complex queries or when uncertain, use LLM analysis (only when needed)
+        # For complex queries, use LLM analysis
         if max_matches == 0 or len(query.split()) > 10:
             return self._llm_analysis(query, conversation_history, best_category)
         
-        # Otherwise use fast analysis for clear FAQ queries
+        # Fast analysis for clear FAQ queries
         return {
             "question_type": "faq_query",
             "routing_decision": "faq_system",
@@ -194,20 +195,19 @@ class LLMPoweredOptimizedFAQSystem:
     
     def _llm_analysis(self, query: str, conversation_history: List, category_hint: str) -> Dict[str, Any]:
         """
-        Use LLM analysis only for complex/ambiguous queries (selective use)
+        Use LLM analysis only for complex/ambiguous queries
         """
-        # Build minimal conversation context for LLM
+        # Build minimal conversation context
         conversation_context = ""
         if conversation_history:
-            recent_messages = conversation_history[-2:]  # Only last 2 for speed
+            recent_messages = conversation_history[-2:]
             context_parts = []
             for msg in recent_messages:
                 if hasattr(msg, 'content') and hasattr(msg, 'message_type'):
                     role = "User" if msg.message_type == 'human' else "Assistant"
-                    context_parts.append(f"{role}: {msg.content[:100]}...")  # Truncate for speed
+                    context_parts.append(f"{role}: {msg.content[:100]}...")
             conversation_context = "\n".join(context_parts)
         
-        # Concise analysis prompt
         analysis_prompt = f"""Analyze this Tiger Securities customer question:
 
 Question: "{query}"
@@ -236,7 +236,7 @@ Guidelines:
                     {"role": "user", "content": analysis_prompt}
                 ],
                 temperature=0.0,
-                max_tokens=200,  # Minimal tokens for analysis
+                max_tokens=200,
                 timeout=8
             )
             
@@ -261,11 +261,11 @@ Guidelines:
     
     def ultra_fast_search(self, query: str, analysis: Dict[str, Any]) -> List[Document]:
         """
-        ULTRA FAST search: Single strategy, minimal calls (target <2 seconds)
+        Ultra fast search with single strategy
         """
         start_time = time.time()
         
-        # Check search cache first
+        # Check search cache
         search_key = f"{query}_{analysis.get('category_hint', 'general')}"
         search_hash = hashlib.md5(search_key.encode()).hexdigest()
         
@@ -275,7 +275,6 @@ Guidelines:
         
         print(f"🚀 Ultra fast search for: '{query}'")
         
-        # SINGLE STRATEGY: Direct query search only (most effective)
         try:
             docs_with_scores = self.vectorstore.similarity_search_with_score(query, k=self.top_k)
             print(f"  📝 Direct search: {len(docs_with_scores)} docs")
@@ -303,30 +302,64 @@ Guidelines:
     def generate_ultra_fast_response(self, query: str, faq_documents: List[Document], 
                                    analysis: Dict[str, Any]) -> str:
         """
-        Ultra fast response generation (target <3 seconds)
+        Ultra fast response generation - handles both FAQ sources and zero sources
         """
-        # Use only top 3 documents for speed
+        print(f"🔍 generate_ultra_fast_response: Got {len(faq_documents)} documents")
+        
+        # Handle zero documents case
+        if not faq_documents:
+            print(f"⚠️ No FAQ documents found - using structured LLM knowledge")
+            return self._generate_zero_documents_response(query)
+        
+        # Handle FAQ documents case
+        return self._generate_faq_response(query, faq_documents)
+    
+    def _generate_faq_response(self, query: str, faq_documents: List[Document]) -> str:
+        """
+        Generate CONCISE, well-structured response using FAQ documents
+        """
+        print(f"📚 Generating CONCISE FAQ response with {len(faq_documents)} sources")
+        
+        # Use top 3 documents for focused response
         top_docs = faq_documents[:3]
         
-        # Build minimal context (critical for speed)
-        faq_context = ""
-        if top_docs:
-            faq_context = "=== FAQ INFO ===\n"
-            for i, doc in enumerate(top_docs, 1):
-                category = doc.metadata.get("category_name", "General")
-                # Severely limit content for speed (200 chars max)
-                content = doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
-                faq_context += f"{i}. [{category}] {content}\n"
-        
-        # Ultra concise prompt for speed
-        system_prompt = f"""You are Tiger Securities' AI assistant. Answer using the FAQ info provided.
+        # Build focused context
+        faq_context = "=== FAQ KNOWLEDGE ===\n"
+        for i, doc in enumerate(top_docs, 1):
+            category = doc.metadata.get("category_name", "General")
+            question = doc.metadata.get("question", "")
+            # Use shorter content for more focused responses
+            content = doc.page_content[:300] + "..." if len(doc.page_content) > 300 else doc.page_content
+            
+            faq_context += f"""
+    {i}. CATEGORY: {category}
+    QUESTION: {question}
+    CONTENT: {content}
+    ---"""
 
-FAQ INFO:
-{faq_context}
+        system_prompt = f"""You are Tiger Securities' AI assistant. Create a CONCISE, well-structured response using the FAQ information.
 
-Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ Database**" """
+    {faq_context}
 
-        user_prompt = f"Q: {query}\nA:"
+    RESPONSE REQUIREMENTS:
+    - Keep response under 200 words
+    - Use clear, short paragraphs (2-3 sentences each)
+    - Start with a direct answer
+    - Use bullet points for lists (• not -)
+    - Include key details but avoid repetition
+    - End with EXACTLY: "**Source: Tiger Securities FAQ Database**"
+    - NO trailing text after the source line
+
+    FORMATTING RULES:
+    - Use paragraphs separated by blank lines
+    - Bold important terms: **Form 1099**, **Account**, etc.
+    - Keep paragraphs short and scannable
+    - Use simple, clear language
+    - Focus on the most important information"""
+
+        user_prompt = f"""User Question: "{query}"
+
+    Create a concise, well-formatted response that directly answers the question. Keep it under 200 words with clear paragraphs and bullet points where helpful."""
 
         try:
             response = self.client.chat.completions.create(
@@ -335,53 +368,316 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
-                temperature=0.0,  # Deterministic for speed
-                max_tokens=400,   # Severely reduced for speed
-                timeout=5         # Aggressive timeout
+                temperature=0.1,
+                max_tokens=300,  # Reduced for shorter responses
+                timeout=15
             )
             
-            return response.choices[0].message.content
+            generated_response = response.choices[0].message.content
+            print(f"🔍 RAW CONCISE FAQ RESPONSE: {repr(generated_response[-50:])}")
+            
+            cleaned_response = self._universal_response_cleaner(generated_response, "faq")
+            print(f"🧹 CLEANED CONCISE RESPONSE: {repr(cleaned_response[-50:])}")
+            
+            return cleaned_response
             
         except Exception as e:
-            logger.error(f"Ultra fast response generation failed: {e}")
-            return self._generate_ultra_fast_fallback_response(query, top_docs)
+            logger.error(f"Concise FAQ response generation failed: {e}")
+            return self._generate_simple_fallback_response(query, top_docs, "faq")
+
     
-    def _generate_ultra_fast_fallback_response(self, query: str, faq_documents: List[Document]) -> str:
-        """Generate ultra fast fallback response"""
-        if faq_documents:
-            doc = faq_documents[0]
-            category = doc.metadata.get("category_name", "General")
-            content = doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
-            return f"{content}\n\n**Source: Tiger Securities FAQ Database: {category}**"
+    def _generate_zero_documents_response(self, query: str) -> str:
+        """
+        Generate CONCISE LLM response when no FAQ documents are found
+        """
+        print(f"🤖 Generating CONCISE LLM knowledge response: {query}")
+        
+        system_prompt = """You are Tiger Securities' AI assistant. Provide a CONCISE, helpful response using your general knowledge.
+
+    RESPONSE REQUIREMENTS:
+    - Keep response under 150 words
+    - Use clear, short paragraphs
+    - Start with a direct answer
+    - Use bullet points for lists (• not -)
+    - Be practical and actionable
+    - End with EXACTLY: "**Source: AI Assistant Knowledge**"
+    - NO trailing text after the source line
+
+    FORMATTING RULES:
+    - Use paragraphs separated by blank lines
+    - Bold important terms
+    - Keep it concise and scannable
+    - Suggest contacting Tiger Securities for specifics"""
+
+        user_prompt = f"""User Question: "{query}"
+
+    This wasn't found in our FAQ database. Provide a concise, helpful response using general financial knowledge. Keep it under 150 words with clear formatting."""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.chat_model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.1,
+                max_tokens=250,  # Reduced for shorter responses
+                timeout=15
+            )
+            
+            generated_response = response.choices[0].message.content
+            print(f"🔍 RAW CONCISE AI RESPONSE: {repr(generated_response[-50:])}")
+            
+            cleaned_response = self._universal_response_cleaner(generated_response, "ai")
+            print(f"🧹 CLEANED CONCISE RESPONSE: {repr(cleaned_response[-50:])}")
+            
+            return cleaned_response
+            
+        except Exception as e:
+            logger.error(f"Concise AI response generation failed: {e}")
+            return self._generate_fallback_response(query, [], "ai")
+
+    def _generate_simple_fallback_response(self, query: str, docs: List[Document], source_type: str) -> str:
+        """Generate a simple fallback response when LLM fails"""
+        if docs and len(docs) > 0:
+            # Use the first document's content directly
+            content = docs[0].page_content[:200] + "..." if len(docs[0].page_content) > 200 else docs[0].page_content
+            source = "**Source: Tiger Securities FAQ Database**" if source_type == "faq" else "**Source: AI Assistant Knowledge**"
+            return f"{content}\n\n{source}"
         else:
-            return "Please contact Tiger Securities customer support for assistance.\n\n**Source: System response**"
-    
-    def generate_ultra_fast_suggestions(self, category_hint: str) -> List[str]:
+            return f"I found information about your question, but I'm having trouble formatting the response right now. Please try asking again or contact Tiger Securities support.\n\n**Source: AI Assistant Knowledge**"
+        
+    def _universal_response_cleaner(self, response: str, source_type: str) -> str:
         """
-        Ultra fast suggestions: NO LLM calls, just category-based
+        Enhanced response cleaner for concise, well-formatted responses
         """
-        return self._generate_fast_suggestions(category_hint)
+        if not response:
+            return response
+        
+        print(f"🧹 Enhanced cleaning for {source_type} response")
+        
+        # Step 1: Initial cleaning
+        cleaned = response.strip()
+        
+        # Step 2: Remove all trailing junk aggressively
+        patterns_to_remove = [
+            r'[\s*\d]+$',           # Numbers and asterisks at end
+            r'\*+\s*$',             # Asterisks at end
+            r'[*\d\s]+$',           # Mixed symbols/numbers
+            r'\s*\d+\s*$',          # Numbers with spaces
+            r'\d+$',                # Just numbers
+        ]
+        
+        for pattern in patterns_to_remove:
+            cleaned = re.sub(pattern, '', cleaned)
+        
+        # Step 3: Set expected source
+        expected_source = "**Source: Tiger Securities FAQ Database**" if source_type == "faq" else "**Source: AI Assistant Knowledge**"
+        
+        # Step 4: Remove any existing malformed source lines
+        source_patterns = [
+            r'\*+\s*Source:.*?\*+.*$',
+            r'\*+Source:.*$', 
+            r'\*\*Source:.*\*\*.*$',
+        ]
+        
+        for pattern in source_patterns:
+            cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE | re.MULTILINE)
+        
+        # Step 5: Format content for better readability
+        lines = cleaned.split('\n')
+        formatted_lines = []
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines or lines with just symbols
+            if not line or re.match(r'^[*\s\d]+$', line):
+                continue
+            
+            # Clean up formatting
+            line = re.sub(r'\s+', ' ', line)  # Multiple spaces to single space
+            line = re.sub(r'^[*\s\d]+', '', line)  # Remove leading junk
+            line = re.sub(r'[*\s\d]+$', '', line)  # Remove trailing junk
+            
+            if line and len(line) > 5:  # Only meaningful lines
+                formatted_lines.append(line)
+        
+        # Step 6: Structure the content with proper paragraphs
+        if formatted_lines:
+            # Group lines into paragraphs
+            paragraphs = []
+            current_paragraph = []
+            
+            for line in formatted_lines:
+                if line.startswith('•') or line.startswith('-') or line.startswith('*'):
+                    # Bullet point - start new paragraph if needed
+                    if current_paragraph:
+                        paragraphs.append(' '.join(current_paragraph))
+                        current_paragraph = []
+                    paragraphs.append(line)
+                elif line.startswith('#') or line.isupper() or len(line) < 50:
+                    # Heading or short line - separate paragraph
+                    if current_paragraph:
+                        paragraphs.append(' '.join(current_paragraph))
+                        current_paragraph = []
+                    paragraphs.append(line)
+                else:
+                    # Regular text - add to current paragraph
+                    current_paragraph.append(line)
+            
+            # Add any remaining paragraph
+            if current_paragraph:
+                paragraphs.append(' '.join(current_paragraph))
+            
+            # Join paragraphs with double newlines for better spacing
+            content = '\n\n'.join(paragraphs)
+            
+            # Ensure it's not too long (max 200 words roughly)
+            words = content.split()
+            if len(words) > 200:
+                content = ' '.join(words[:200]) + '...'
+            
+            final_response = f"{content}\n\n{expected_source}"
+        else:
+            final_response = f"I have information about your question. Please contact Tiger Securities for specific details.\n\n{expected_source}"
+        
+        # Step 7: Final cleanup - ensure no trailing junk after source
+        source_index = final_response.rfind(expected_source)
+        if source_index != -1:
+            final_response = final_response[:source_index + len(expected_source)]
+        
+        # Step 8: Ensure proper paragraph breaks
+        final_response = re.sub(r'\n{3,}', '\n\n', final_response)  # Max 2 newlines
+        final_response = final_response.strip()
+        
+        print(f"🧹 Cleaned response length: {len(final_response)} chars, {len(final_response.split())} words")
+        
+        return final_response
     
-    def _generate_fast_suggestions(self, category_hint: str) -> List[str]:
-        """Fast category-based suggestions"""
+    
+    def _generate_fallback_response(self, query: str, documents: List[Document], source_type: str) -> str:
+        """
+        Generate clean fallback response when LLM calls fail
+        """
+        expected_source = "**Source: Tiger Securities FAQ Database**" if source_type == "faq" else "**Source: AI Assistant Knowledge**"
+        
+        if documents and source_type == "faq":
+            doc = documents[0]
+            content = doc.page_content[:300]
+            # Clean the content
+            content = re.sub(r'[\s*\d]+$', '', content)
+            return f"{content}\n\n{expected_source}"
+        else:
+            return f"""I understand you're asking about "{query}".
+
+While this specific question isn't covered in our Tiger Securities FAQ database, I recommend:
+
+• Search online for detailed information about this topic
+• Visit the official Tiger Securities website for specific policies  
+• Contact Tiger Securities customer support directly for personalized assistance
+
+Our support team can provide you with the most accurate and up-to-date information for your specific needs.
+
+{expected_source}"""
+    
+    def generate_ultra_fast_suggestions(self, query: str, category_hint: str, faq_documents: List[Document]) -> List[str]:
+        """
+        Generate relevant suggestions based on the actual query and found documents
+        """
+        print(f"🔍 Generating suggestions for query: '{query}' with category: {category_hint}")
+        
+        # If we have FAQ documents, generate suggestions based on similar content
+        if faq_documents:
+            return self._generate_contextual_suggestions(query, faq_documents, category_hint)
+        else:
+            # For zero sources, generate suggestions based on query keywords
+            return self._generate_keyword_based_suggestions(query, category_hint)
+    
+    def _generate_contextual_suggestions(self, query: str, faq_documents: List[Document], category_hint: str) -> List[str]:
+        """
+        Generate suggestions based on found FAQ documents
+        """
+        suggestions = []
+        categories_found = set()
+        
+        # Extract categories and related questions from found documents
+        for doc in faq_documents[:6]:  # Use more docs for suggestions
+            category = doc.metadata.get("category_name", "")
+            question = doc.metadata.get("question", "")
+            
+            if category and category not in categories_found:
+                categories_found.add(category)
+                if question and question not in suggestions and len(question) < 100:
+                    suggestions.append(question)
+        
+        # If we don't have enough, supplement with category-based suggestions
+        if len(suggestions) < 4:
+            category_suggestions = self._get_category_suggestions(category_hint)
+            for suggestion in category_suggestions:
+                if suggestion not in suggestions:
+                    suggestions.append(suggestion)
+                if len(suggestions) >= 4:
+                    break
+        
+        return suggestions[:4]
+    
+    def _generate_keyword_based_suggestions(self, query: str, category_hint: str) -> List[str]:
+        """
+        Generate suggestions based on query keywords when no FAQ docs found
+        """
+        query_lower = query.lower()
+        
+        # Keyword-based suggestions
+        if any(word in query_lower for word in ['document', 'documents', 'need', 'required', 'verification']):
+            return [
+                "What documents do I need to open an account?",
+                "How do I verify my identity?",
+                "What is the account approval process?",
+                "How long does identity verification take?"
+            ]
+        
+        if any(word in query_lower for word in ['deposit', 'fund', 'money', 'transfer']):
+            return [
+                "How do I deposit money into my account?",
+                "What are the funding options available?",
+                "How long do deposits take to clear?",
+                "Are there any deposit fees?"
+            ]
+        
+        if any(word in query_lower for word in ['trade', 'trading', 'buy', 'sell']):
+            return [
+                "How do I place my first trade?",
+                "What are the trading fees?",
+                "What order types are available?",
+                "What are the trading hours?"
+            ]
+        
+        # Default suggestions based on category
+        return self._get_category_suggestions(category_hint)
+    
+    def _get_category_suggestions(self, category_hint: str) -> List[str]:
+        """
+        Get default suggestions based on category
+        """
         category_suggestions = {
             'account': [
+                "How do I open a Tiger Securities account?",
+                "What documents are required for account opening?",
                 "How long does account approval take?",
-                "What documents do I need to open an account?",
-                "What are the different account types available?",
-                "How do I verify my identity?"
+                "What types of accounts are available?"
             ],
             'funding': [
                 "How do I deposit money into my account?",
-                "How long do ACH transfers take?",
-                "What are the withdrawal fees?",
-                "Can I wire transfer funds?"
+                "What are the available funding methods?",
+                "How long do deposits take?",
+                "Are there withdrawal fees?"
             ],
             'trading': [
                 "What are the trading fees and commissions?",
                 "How do I place my first trade?", 
                 "What are the trading hours?",
-                "What order types are available?"
+                "What order types are supported?"
             ],
             'margin': [
                 "What are margin requirements?",
@@ -400,7 +696,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
         if category_hint in category_suggestions:
             return category_suggestions[category_hint]
         
-        # Default comprehensive suggestions
+        # Default general suggestions
         return [
             "How do I open a Tiger Securities account?",
             "What are the trading fees and commissions?",
@@ -410,26 +706,26 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
     
     def get_smart_response(self, query: str, conversation_history: List = None) -> Dict[str, Any]:
         """
-        Main balanced pipeline: Comprehensive + Fast (5-8 seconds typical)
+        Main response pipeline with proper source attribution
         """
         start_time = time.time()
-        logger.info(f"Processing balanced query: {query}")
+        logger.info(f"Processing query: {query}")
         
-        # Check cache first (instant for repeated queries)
+        # Check cache first
         query_hash = self._get_question_hash(query)
         if query_hash in self.response_cache:
             cached_result = self.response_cache[query_hash].copy()
             cached_result['from_cache'] = True
             cached_result['processing_time'] = time.time() - start_time
-            print(f"⚡ Cache hit - comprehensive response available instantly!")
+            print(f"⚡ Cache hit - response available instantly!")
             return cached_result
         
-        # Step 1: Smart analysis (fast for obvious cases, LLM for complex)
+        # Step 1: Smart analysis
         analysis = self.smart_question_analysis(query, conversation_history)
         analysis_method = analysis.get('analysis_method', 'unknown')
         print(f"🧠 Analysis ({analysis_method}): {analysis['question_type']} -> {analysis['routing_decision']}")
         
-        # Step 2: Handle simple routing cases quickly
+        # Step 2: Handle simple routing cases
         if analysis['routing_decision'] == 'market_agent':
             result = {
                 "query": query,
@@ -438,7 +734,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                 "analysis": analysis,
                 "num_sources": 0,
                 "sources": [],
-                "suggested_questions": self._generate_fast_suggestions("trading"),
+                "suggested_questions": self._get_category_suggestions("trading"),
                 "processing_time": time.time() - start_time,
                 "from_cache": False,
                 "source_attribution": "Market Agent Routing"
@@ -447,7 +743,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
         
         elif analysis['routing_decision'] == 'simple_response':
             if analysis['question_type'] == 'greeting':
-                simple_response = "Hello! I'm here to help you with your Tiger Securities questions. I have access to our comprehensive FAQ database covering all 16 service categories. What would you like to know?"
+                simple_response = "Hello! I'm here to help you with your Tiger Securities questions. I have access to our comprehensive FAQ database covering all service categories. What would you like to know?"
             elif analysis['question_type'] == 'memory_query':
                 simple_response = "I don't have access to our previous conversation history in this session. However, I'm here to help with any Tiger Securities questions about trading, accounts, or our services. What would you like to know?"
             else:
@@ -460,25 +756,26 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                 "analysis": analysis,
                 "num_sources": 0,
                 "sources": [],
-                "suggested_questions": self._generate_fast_suggestions("account"),
+                "suggested_questions": self._get_category_suggestions("account"),
                 "processing_time": time.time() - start_time,
                 "from_cache": False,
                 "source_attribution": "AI Assistant"
             }
             return result
         
-        # Step 3: Ultra fast search (single strategy, <2s target)
-        print(f"🚀 Starting ultra fast FAQ search...")
+        # Step 3: FAQ search and response
+        print(f"🚀 Starting FAQ search...")
         faq_documents = self.ultra_fast_search(query, analysis)
         
-        # Step 4: Generate ultra fast response (single LLM call, <3s target)
-        print(f"⚡ Generating ultra fast response...")
+        print(f"⚡ Generating response...")
         response = self.generate_ultra_fast_response(query, faq_documents, analysis)
         
-        # Step 5: Ultra fast suggestions (no LLM call)
-        suggested_questions = self.generate_ultra_fast_suggestions(analysis.get('category_hint', 'general'))
+        # Generate contextual suggestions
+        suggested_questions = self.generate_ultra_fast_suggestions(
+            query, analysis.get('category_hint', 'general'), faq_documents
+        )
         
-        # Compile comprehensive results
+        # Compile results
         sources = []
         for doc in faq_documents:
             sources.append({
@@ -497,7 +794,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
             else:
                 source_attribution = f"Tiger Securities FAQ Database: {', '.join(categories_used[:3])}"
         else:
-            source_attribution = "AI Knowledge"
+            source_attribution = "AI Assistant Knowledge + Online Search Suggested"
             categories_used = []
         
         result = {
@@ -514,10 +811,10 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
             "source_attribution": source_attribution,
             "faq_sources_count": len(faq_documents),
             "search_strategies_used": list(set(doc.metadata.get("retrieval_method", "unknown") for doc in faq_documents)),
-            "balanced_system": True
+            "has_faq_sources": len(faq_documents) > 0
         }
         
-        # Cache the comprehensive response
+        # Cache the response
         self.response_cache[query_hash] = result.copy()
         
         # Limit cache size
@@ -526,13 +823,12 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
             for key in keys_to_remove:
                 del self.response_cache[key]
         
-        print(f"✅ ULTRA FAST RESPONSE COMPLETED:")
+        print(f"✅ RESPONSE COMPLETED:")
         print(f"   📊 FAQ sources: {len(faq_documents)}")
         print(f"   📝 Source attribution: {source_attribution}")
         print(f"   ⏱️  Total time: {result['processing_time']:.2f}s")
-        print(f"   🎯 Analysis method: {analysis_method}")
+        print(f"   🤖 LLM knowledge used: {len(faq_documents) == 0}")
         
-        logger.info(f"Ultra fast response generated in {result['processing_time']:.2f}s with {len(sources)} FAQ sources")
         return result
     
     def clear_cache(self):
@@ -561,7 +857,9 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                 'quality_preservation': True,
                 'enhanced_caching': True,
                 'selective_llm_usage': True,
-                'source_attribution': True
+                'source_attribution': True,
+                'contextual_suggestions': True,
+                'universal_response_cleaning': True
             },
             'cache_stats': self.get_cache_stats()
         }
@@ -577,17 +875,16 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
         return info
     
     def interactive_chat(self):
-        """Interactive chat with balanced performance"""
+        """Interactive chat interface"""
         print("\n" + "="*80)
         print("🐅 TIGER SECURITIES ULTRA FAST FAQ ASSISTANT")
         print("⚡ Ultra Fast (3-5s) + 🎯 Accurate + 📚 FAQ-Based")
         print("="*80)
-        print("🚀 Ultra Fast Optimizations:")
-        print("   ⚡ Single search strategy (most effective only)")
-        print("   🎯 Minimal LLM context (top 3 docs, 200 chars each)")
-        print("   🚀 Aggressive timeouts and token limits")
+        print("🚀 Features:")
+        print("   ⚡ Single search strategy for speed")
+        print("   🎯 Contextual suggestions based on your questions")
+        print("   🧹 Universal response cleaning (no trailing characters)")
         print("   💾 Enhanced caching for instant repeats")
-        print("   🔥 No LLM calls for suggestions (instant)")
         print("   ⏱️  Target: 3-5 second responses")
         
         info = self.get_system_info()
@@ -595,12 +892,6 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
             faq_info = info['faq_database']
             print(f"   📚 FAQ database: {faq_info['total_qa_pairs']} Q&A pairs across {faq_info['total_categories']} categories")
         
-        print(f"\n⚡ ULTRA FAST APPROACH:")
-        print(f"   ✅ Single most effective search strategy")
-        print(f"   ✅ Minimal context for speed (top 3 docs)")
-        print(f"   ✅ Reduces response time from 20-30s to 3-5s")
-        print(f"   ✅ Instant responses for cached queries")
-        print(f"   ✅ Still strictly FAQ-based and accurate")
         print("="*80 + "\n")
         
         question_count = 0
@@ -618,8 +909,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                     print(f"   Questions: {question_count}")
                     print(f"   Average response time: {avg_time:.2f}s")
                     print(f"   Cache hit rate: {cache_rate:.1f}%")
-                    print(f"   Performance: {'🚀 Excellent' if avg_time < 6 else '✅ Good' if avg_time < 10 else '⚠️ Needs optimization'}")
-                    print("\n⚡ Thank you for using Ultra Fast Tiger Securities FAQ Assistant!")
+                    print("\n⚡ Thank you for using Tiger Securities FAQ Assistant!")
                     break
                 
                 if user_input.lower() == 'stats':
@@ -642,7 +932,7 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                     continue
                 
                 question_count += 1
-                print(f"\n🚀 Processing with ultra fast approach (3-5s target)...")
+                print(f"\n🚀 Processing...")
                 
                 result = self.get_smart_response(user_input)
                 total_time += result['processing_time']
@@ -650,33 +940,21 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
                 if result.get('from_cache'):
                     cached_responses += 1
                 
-                # Display analysis info
-                analysis = result.get('analysis', {})
-                analysis_method = analysis.get('analysis_method', 'unknown')
-                print(f"\n🧠 Analysis ({analysis_method}): {analysis.get('question_type', 'unknown')}")
-                
                 # Display response
                 if result.get('use_market_agent'):
                     print(f"\n🔀 {result['response']}")
                 else:
-                    print(f"\n🐅 Tiger Securities Comprehensive Response:")
+                    print(f"\n🐅 Tiger Securities Response:")
                     print(f"{result['response']}")
                 
                 # Performance metrics
                 time_taken = result['processing_time']
-                speed_indicator = "⚡" if time_taken < 4 else "🚀" if time_taken < 6 else "✅" if time_taken < 8 else "⏱️"
+                speed_indicator = "⚡" if time_taken < 4 else "🚀" if time_taken < 6 else "✅"
                 cache_indicator = "💾" if result.get('from_cache') else "🆕"
                 
                 print(f"\n📊 {speed_indicator} {cache_indicator} Response time: {time_taken:.2f}s")
-                print(f"   📚 FAQ sources: {result.get('faq_sources_count', 0)} of 128 total")
+                print(f"   📚 FAQ sources: {result.get('faq_sources_count', 0)}")
                 print(f"   🎯 Categories: {', '.join(result.get('categories_used', [])[:3])}")
-                
-                if result.get('search_strategies_used'):
-                    print(f"   🔍 Search methods: {', '.join(result['search_strategies_used'])}")
-                
-                # Quality indicators
-                quality_score = "🏆 Excellent" if result.get('num_sources', 0) >= 5 else "✅ Good" if result.get('num_sources', 0) >= 3 else "⚠️ Limited"
-                print(f"   📈 Coverage: {quality_score}")
                 
                 # Suggestions
                 if result.get('suggested_questions'):
@@ -696,18 +974,16 @@ Requirements: Be direct, helpful, and end with "**Source: Tiger Securities FAQ D
 def main():
     """Main function"""
     try:
-        print("⚖️  Initializing Balanced Tiger Securities FAQ Assistant...")
-        print("🎯 Target: Comprehensive + Fast (5-8 second responses)")
+        print("⚖️  Initializing Tiger Securities FAQ Assistant...")
+        print("🎯 Target: Fast + Accurate responses")
         
         faq_system = LLMPoweredOptimizedFAQSystem()
         
-        print("✅ Balanced FAQ Assistant ready!")
-        print("📊 Expected performance: 75% faster than original, same quality")
-        
+        print("✅ FAQ Assistant ready!")
         faq_system.interactive_chat()
         
     except Exception as e:
-        logger.error(f"Enhanced LLM FAQ system failed: {str(e)}")
+        logger.error(f"FAQ system failed: {str(e)}")
         print(f"❌ Error: {str(e)}")
 
 if __name__ == "__main__":
