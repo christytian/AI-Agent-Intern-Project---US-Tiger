@@ -543,14 +543,81 @@ const TradeUpFAQ = () => {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Format response text
+  // ENHANCED formatResponse function with intelligent formatting
   const formatResponse = (text) => {
-    const safeText = extractText(text);
-    return safeText
-      .replace(/\n/g, '<br>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    let safeText = extractText(text);
+    
+    // STEP 1: Clean up the text first
+    safeText = safeText
+      .replace(/\s+/g, ' ')  // Multiple spaces to single space
+      .replace(/\n\s*\n/g, '\n\n')  // Clean up line breaks
+      .trim();
+    
+    // STEP 2: Smart Bold Formatting Rules
+    // Remove random bold formatting first
+    safeText = safeText.replace(/\*\*/g, '');
+    
+    // STEP 3: Apply INTELLIGENT bold formatting
+    
+    // Bold company name and main topics
+    safeText = safeText.replace(/(Tiger Securities)/g, '**$1**');
+    
+    // Bold section headers (text followed by colon)
+    safeText = safeText.replace(/^([A-Z][^.!?]*:)(?=\s)/gm, '**$1**');
+    
+    // Bold key action items and important phrases
+    const keyPhrases = [
+      'Required Documents', 'Application Process', 'Important', 'Note',
+      'Account Types', 'Trading Fees', 'Minimum Deposit', 'Next Steps',
+      'Getting Started', 'Step 1', 'Step 2', 'Step 3', 'First', 'Next', 'Finally',
+      'Cash Account', 'Margin Account', 'IRA Account', 'Day Trading',
+      'Commission-Free', 'Real-Time Quotes', 'Extended Hours', 'Mobile App'
+    ];
+    
+    keyPhrases.forEach(phrase => {
+      const regex = new RegExp(`\\b(${phrase})\\b`, 'gi');
+      safeText = safeText.replace(regex, '**$1**');
+    });
+    
+    // Bold numbered steps and bullet points leaders
+    safeText = safeText.replace(/^(\d+\.\s)/gm, '**$1**');
+    safeText = safeText.replace(/^(•\s)/gm, '**$1**');
+    
+    // STEP 4: Structure improvements
+    
+    // Convert bullet points to proper HTML
+    safeText = safeText.replace(/^•\s/gm, '<li>');
+    if (safeText.includes('<li>')) {
+      safeText = safeText.replace(/(<li>.*?)(?=\n|$)/g, '$1</li>');
+      safeText = `<ul>${safeText}</ul>`;
+    }
+    
+    // Convert numbered lists
+    safeText = safeText.replace(/^(\d+\.\s)/gm, '<li>');
+    if (safeText.includes('<li>') && !safeText.includes('<ul>')) {
+      safeText = safeText.replace(/(<li>.*?)(?=\n|$)/g, '$1</li>');
+      safeText = `<ol>${safeText}</ol>`;
+    }
+    
+    // STEP 5: Apply final formatting
+    
+    // Convert **text** to <strong>text</strong>
+    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert *text* to <em>text</em>
+    safeText = safeText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convert line breaks
+    safeText = safeText.replace(/\n/g, '<br>');
+    
+    // STEP 6: Add spacing for better readability
+    safeText = safeText.replace(/<\/strong><br>/g, '</strong><br><br>');
+    safeText = safeText.replace(/<\/ul>/g, '</ul><br>');
+    safeText = safeText.replace(/<\/ol>/g, '</ol><br>');
+    
+    return safeText;
   };
+
 
   return (
     <div className={`container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -674,29 +741,59 @@ const TradeUpFAQ = () => {
             </div>
           )}
           
-          {/* FIXED Messages Rendering */}
+          {/* ENHANCED Messages Rendering with FIXED Formatting */}
           {Array.isArray(messages) ? messages.map((message, index) => (
             <div key={message.timestamp || index} className={`message ${message.type}`}>
               <div className="message-bubble">
                 {message.type === 'error' ? (
                   <span className="error-text">❌ {extractText(message.content)}</span>
                 ) : (
-                  <div dangerouslySetInnerHTML={{__html: formatResponse(message.content)}} />
+                  <div 
+                    className="message-content"
+                    dangerouslySetInnerHTML={{__html: formatResponse(message.content)}} 
+                  />
                 )}
                 
-                {/* FIXED Sources */}
+                {/* ENHANCED Sources Display */}
                 {Array.isArray(message.sources) && message.sources.length > 0 && (
                   <div className="sources">
                     <strong>📚 Sources:</strong>
-                    {message.sources.map((source, idx) => (
-                      <span key={`source-${idx}`} className="source-item">
-                        {extractText(source)}
-                      </span>
-                    ))}
+                    {message.sources.map((source, idx) => {
+                      const sourceText = extractText(source);
+                      
+                      // Style sources differently based on type
+                      let sourceClass = 'source-item';
+                      let sourceIcon = '';
+                      
+                      if (sourceText.includes('Yahoo Finance') || sourceText.includes('Real-time') || sourceText.includes('Market Data')) {
+                        sourceClass += ' source-market-data';
+                        sourceIcon = '📈 ';
+                      } else if (sourceText.includes('FAQ Database') || sourceText.includes('Tiger Securities')) {
+                        sourceClass += ' source-faq';
+                        sourceIcon = '📋 ';
+                      } else if (sourceText.includes('AI Assistant') || sourceText.includes('LLM')) {
+                        sourceClass += ' source-ai';
+                        sourceIcon = '🤖 ';
+                      } else if (sourceText.includes('Web Search') || sourceText.includes('Online')) {
+                        sourceClass += ' source-web';
+                        sourceIcon = '🌐 ';
+                      } else if (sourceText.includes('⚠️') || sourceText.includes('delayed') || sourceText.includes('disclaimer')) {
+                        sourceClass += ' source-disclaimer';
+                        sourceIcon = '';
+                      } else {
+                        sourceIcon = '📖 ';
+                      }
+                      
+                      return (
+                        <span key={`source-${idx}`} className={sourceClass}>
+                          {sourceIcon}{sourceText}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 
-                {/* FIXED Suggested Questions */}
+                {/* Suggested Questions */}
                 {Array.isArray(message.suggested_questions) && message.suggested_questions.length > 0 && (
                   <div className="suggested-questions">
                     <strong>💡 You might also ask:</strong><br />
@@ -736,15 +833,30 @@ const TradeUpFAQ = () => {
                 )}
               </div>
 
-              {/* FIXED System Info */}
+              {/* ENHANCED System Info Display */}
               {message.system_info && (
                 <div className="message-info">
-                  {message.system_info.system_used === 'enhanced_agent' || message.system_info.system_used === 'faq_market_agent' ? '🚀' : 
-                   message.system_info.system_used === 'memory_faq' || message.system_info.system_used === 'faq_system' ? '🧠' : '📖'} 
-                  {extractText(message.system_info.capabilities) || 'FAQ System'}
-                  {message.system_info.sources_count && ` • 📊 ${message.system_info.sources_count} sources`}
+                  {/* System icon and name based on type */}
+                  {message.system_info.system_used === 'faq_market_agent' ? '📈 Market Data Agent' :
+                  message.system_info.system_used === 'enhanced_llm_faq_system' ? '🧠 LLM FAQ System' :
+                  message.system_info.system_used === 'enhanced_agent' ? '🚀 Enhanced Agent' : 
+                  '📖 FAQ System'}
+                  
+                  {/* Source count */}
+                  {message.system_info.sources_count && message.system_info.sources_count > 0 && 
+                    ` • 📊 ${message.system_info.sources_count} sources`}
+                  
+                  {/* Categories */}
                   {Array.isArray(message.system_info.categories) && message.system_info.categories.length > 0 && 
                     ` • 📂 ${message.system_info.categories.map(extractText).join(', ')}`}
+                  
+                  {/* Processing time */}
+                  {message.system_info.processing_time && 
+                    ` • ⏱️ ${parseFloat(message.system_info.processing_time).toFixed(1)}s`}
+                  
+                  {/* Tools used (for market agent) */}
+                  {Array.isArray(message.system_info.tools_used) && message.system_info.tools_used.length > 0 && 
+                    ` • 🔧 ${message.system_info.tools_used.join(', ')}`}
                 </div>
               )}
             </div>

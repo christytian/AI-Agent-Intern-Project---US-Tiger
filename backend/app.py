@@ -338,43 +338,110 @@ def get_related_terms(keyword: str) -> list[str]:
 
 def should_use_market_agent(query: str) -> bool:
     """
-    Determine if query should use market agent based on keywords
+    ENHANCED: Better detection for market overview and real-time queries
     """
-    query_lower = query.lower()
+    query_lower = query.lower().strip()
     
-    # Stock-related keywords
-    stock_keywords = [
-        'stock price', 'share price', 'current price', 'price of',
-        'quote', 'ticker', 'stock quote', 'market price',
-        'stock news', 'company news', 'earnings',
-        'market overview', 'market status', 'indices',
-        'nasdaq', 'dow jones', 's&p 500', 'nyse',
-        'apple stock', 'tesla stock', 'microsoft stock',
-        'aapl', 'tsla', 'msft', 'googl', 'amzn', 'nvda', 'meta'
+    # HIGH PRIORITY: Real-time market queries (THESE SHOULD ALWAYS USE MARKET AGENT)
+    high_priority_market_keywords = [
+        # Market overview queries
+        'current market overview', 'market overview', 'today\'s market', 'market today',
+        'market status', 'market summary', 'market update', 'market report',
+        'how is the market', 'what\'s the market doing', 'market performance today',
+        
+        # Real-time data requests  
+        'current price', 'stock price', 'share price', 'latest price', 'live price',
+        'real time price', 'today\'s price', 'price today', 'current quote',
+        
+        # Market indices
+        'dow jones', 's&p 500', 'sp500', 'nasdaq', 'russell 2000', 'market indices',
+        'how are the indices', 'index performance', 'market index',
+        
+        # Trending/current market analysis
+        'market trends', 'market analysis today', 'stock market trends',
+        'what\'s trending', 'market direction', 'bull market', 'bear market'
     ]
     
-    # Company names that typically indicate stock queries
-    company_names = [
-        'apple', 'microsoft', 'google', 'amazon', 'tesla', 
-        'nvidia', 'meta', 'facebook', 'netflix', 'adobe',
-        'salesforce', 'oracle', 'intel', 'amd', 'uber'
+    # Company-specific stock queries
+    company_stock_keywords = [
+        'stock information', 'stock info', 'stock data', 'stock performance',
+        'stock analysis', 'stock overview', 'share information', 'share price',
+        'company stock', 'stock quote', 'ticker', 'market cap'
     ]
     
-    # Check for stock keywords
-    for keyword in stock_keywords:
-        if keyword in query_lower:
-            return True
+    # News and events that affect markets
+    market_news_keywords = [
+        'stock news', 'market news', 'financial news', 'earnings',
+        'analyst rating', 'price target', 'market movers', 'gainers', 'losers'
+    ]
     
-    # Check for company names with stock-related context
-    for company in company_names:
-        if company in query_lower and any(word in query_lower for word in ['stock', 'price', 'share', 'quote', 'news']):
-            return True
+    # Company names (expanded list)
+    major_companies = [
+        'apple', 'microsoft', 'google', 'alphabet', 'amazon', 'tesla', 
+        'nvidia', 'meta', 'facebook', 'netflix', 'adobe', 'oracle',
+        'salesforce', 'intel', 'amd', 'uber', 'lyft', 'airbnb',
+        'zoom', 'spotify', 'twitter', 'snapchat', 'walmart', 'target',
+        'coca cola', 'pepsi', 'starbucks', 'nike', 'boeing'
+    ]
     
-    # Check for ticker symbol patterns (3-4 uppercase letters)
+    # Stock ticker patterns (2-5 uppercase letters)
+    import re
     ticker_pattern = r'\b[A-Z]{2,5}\b'
+    
+    print(f"🔍 MARKET AGENT ROUTING CHECK: '{query}'")
+    
+    # PRIORITY 1: High priority market keywords (most important)
+    for keyword in high_priority_market_keywords:
+        if keyword in query_lower:
+            print(f"✅ HIGH PRIORITY MATCH: '{keyword}' → MARKET AGENT")
+            return True
+    
+    # PRIORITY 2: Company + stock context
+    for company in major_companies:
+        if company in query_lower:
+            # Check for stock-related context
+            stock_context = ['stock', 'price', 'share', 'quote', 'trading', 'market', 'information', 'info', 'data']
+            for context in stock_context:
+                if context in query_lower:
+                    print(f"✅ COMPANY + CONTEXT: '{company}' + '{context}' → MARKET AGENT")
+                    return True
+            
+            # Check for question phrases about companies
+            question_phrases = ['what about', 'tell me about', 'how is', 'what\'s', 'give me info', 'information about']
+            for phrase in question_phrases:
+                if phrase in query_lower:
+                    print(f"✅ COMPANY + QUESTION: '{company}' + '{phrase}' → MARKET AGENT")
+                    return True
+    
+    # PRIORITY 3: Stock-specific keywords
+    for keyword in company_stock_keywords:
+        if keyword in query_lower:
+            print(f"✅ STOCK KEYWORD: '{keyword}' → MARKET AGENT")
+            return True
+    
+    # PRIORITY 4: Market news keywords
+    for keyword in market_news_keywords:
+        if keyword in query_lower:
+            print(f"✅ MARKET NEWS: '{keyword}' → MARKET AGENT")
+            return True
+    
+    # PRIORITY 5: Ticker symbol pattern
     if re.search(ticker_pattern, query):
+        print(f"✅ TICKER PATTERN FOUND → MARKET AGENT")
         return True
     
+    # PRIORITY 6: Investment/financial keywords
+    financial_keywords = [
+        'invest in', 'investment', 'portfolio', 'buy stock', 'sell stock',
+        'financial analysis', 'valuation', 'pe ratio', 'dividend', 'earnings'
+    ]
+    
+    for keyword in financial_keywords:
+        if keyword in query_lower:
+            print(f"✅ FINANCIAL KEYWORD: '{keyword}' → MARKET AGENT")
+            return True
+    
+    print(f"❌ NO MARKET INDICATORS → FAQ SYSTEM")
     return False
 
 # ============================================================================
@@ -428,10 +495,11 @@ def health_check():
         'performance': processing_stats
     })
 
+
 @app.route('/api/ask', methods=['POST'])
 def ask_question():
     """
-    Enhanced ask endpoint with market agent integration
+    COMPLETE: Enhanced ask endpoint with Market Agent, Memory System, and FAQ System
     """
     try:
         data = request.get_json()
@@ -442,90 +510,274 @@ def ask_question():
         if not user_question:
             return jsonify({'error': 'Empty question'}), 400
         
-        print(f"Processing question: {user_question}")
-        
-        # Check if question should use market agent
+        print(f"\n🔍 === PROCESSING QUESTION ===")
+        print(f"📝 Question: '{user_question}'")
+
+        # STEP 1: Check if question should use market agent (HIGHEST PRIORITY)
         use_market_agent_flag = should_use_market_agent(user_question)
+        print(f"🎯 Market agent routing: {use_market_agent_flag}")
         
-        if use_market_agent_flag and faq_market_agent:  # FIXED: was 'market_agent'
-            print("🎯 Routing to FAQ Market Agent")
+        if use_market_agent_flag and faq_market_agent:
+            print(f"✅ ROUTING TO: FAQ Market Agent")
+            print(f"🚀 === MARKET AGENT PROCESSING ===")
             
-            # Use the market agent
-            market_result = faq_market_agent.ask_question(user_question)  # FIXED: was 'market_agent'
-            
-            if market_result['success']:
-                # Store the conversation in your database
-                session_id, user_id = get_or_create_session()  # FIXED: returns tuple
+            try:
+                # Use the market agent
+                market_result = faq_market_agent.ask_question(user_question)
+                print(f"📤 Market agent response: {market_result.get('success', False)}")
                 
-                # Store user question
-                store_message(session_id, user_question, 'human')
-                
-                # Store agent response
-                store_message(session_id, market_result['response'], 'ai')
-                
-                return jsonify({
-                    'success': True,
-                    'response': market_result['response'],
-                    'agent_type': 'faq_market_agent',
-                    'capabilities': market_result.get('capabilities', []),
-                    'tools_used': market_result.get('tools_available', []),
-                    'conversation_length': market_result.get('conversation_length', 0),
-                    'session_id': session_id,
-                    'processing_time': 0,  # Market agent handles its own timing
-                    'suggested_questions': [
-                        "What's the current market overview?",
-                        "How do I place a stock trade?", 
-                        "What are trading fees?",
-                        "Can I get real-time quotes?"
-                    ]
-                })
-            else:
-                # Fall back to regular FAQ if market agent fails
-                print("⚠️ Market agent failed, falling back to FAQ system")
+                if market_result['success']:
+                    print(f"✅ Market agent SUCCESS - storing messages")
+                    
+                    # Store the conversation in your database
+                    session_id, user_id = get_or_create_session()
+                    
+                    # Store user question
+                    store_message(session_id, user_question, 'human')
+                    
+                    # Store agent response
+                    store_message(session_id, market_result['response'], 'ai')
+                    
+                    # Enhanced source attribution for market agent
+                    sources = []
+                    tools_used = market_result.get('tools_available', [])
+                    response_text = str(market_result.get('response', ''))
+                    
+                    print(f"🔧 Tools available: {tools_used}")
+                    print(f"📝 Response preview: {response_text[:100]}...")
+                    
+                    # Determine sources based on response content and tools
+                    if any(tool in str(tools_used) for tool in ['get_stock_quote', 'stock']):
+                        sources.append('Yahoo Finance (Real-time Stock Data)')
+                        print(f"📈 Added Yahoo Finance source")
+                    
+                    if any(tool in str(tools_used) for tool in ['search_web', 'web']):
+                        sources.append('Web Search Results')
+                        print(f"🌐 Added Web Search source")
+                    
+                    if any(tool in str(tools_used) for tool in ['get_market_overview', 'market']):
+                        sources.append('Market Data Provider')
+                        print(f"📊 Added Market Data Provider source")
+                    
+                    if any(tool in str(tools_used) for tool in ['faq_search', 'faq']):
+                        sources.append('Tiger Securities FAQ Database')
+                        print(f"📋 Added FAQ Database source")
+                    
+                    # Always include market agent as a source if no specific tools detected
+                    if not sources:
+                        sources.append('LLM Market Intelligence')
+                        print(f"🤖 Added LLM Market Intelligence source")
+                        
+                    # Add market data disclaimer
+                    sources.append('⚠️ Market data may be delayed')
+                    
+                    print(f"📚 Final sources: {sources}")
+                    
+                    response_data = {
+                        'success': True,
+                        'response': market_result['response'],
+                        'system_used': 'faq_market_agent',
+                        'capabilities': market_result.get('capabilities', 'Market Data & FAQ Analysis'),
+                        'sources': sources,
+                        'sources_count': len(sources),
+                        'tools_used': tools_used,
+                        'conversation_length': market_result.get('conversation_length', 0),
+                        'session_id': session_id,
+                        'processing_time': market_result.get('processing_time', 0),
+                        'categories': ['market_data', 'real_time'],
+                        'suggested_questions': [
+                            "What's the current market overview?",
+                            "How do I place a stock trade?", 
+                            "What are trading fees?",
+                            "Can I get real-time quotes?",
+                            "Show me other stock prices"
+                        ]
+                    }
+                    
+                    print(f"✅ MARKET AGENT SUCCESS - Response ready")
+                    print(f"📊 Response data keys: {list(response_data.keys())}")
+                    return jsonify(response_data)
+                    
+                else:
+                    print(f"❌ Market agent FAILED: {market_result.get('error', 'Unknown error')}")
+                    print(f"🔄 Falling back to FAQ system")
+                    use_market_agent_flag = False
+                    
+            except Exception as market_error:
+                print(f"💥 MARKET AGENT ERROR: {market_error}")
+                print(f"🔄 Falling back to FAQ system")
                 use_market_agent_flag = False
         
+        elif use_market_agent_flag and not faq_market_agent:
+            print(f"⚠️ Market agent routing triggered but faq_market_agent is None")
+            print(f"🔄 Falling back to FAQ system")
+            use_market_agent_flag = False
+        
+        # STEP 2: Check if it's a memory question (SECOND PRIORITY)
         if not use_market_agent_flag:
-            print("🔍 Routing to FAQ System")
+            print(f"🧠 === MEMORY & FAQ SYSTEM ROUTING ===")
             
-            # Get conversation history
-            session_id, user_id = get_or_create_session()  # FIXED: returns tuple
+            # Get session info first
+            session_id, user_id = get_or_create_session()
+            print(f"💾 Session: {session_id}, User: {user_id}")
+            
+            # CRITICAL: Detect memory questions
+            memory_indicators = [
+                'what did i just ask', 'what did i ask', 'what was my question',
+                'how many questions', 'question count', 'how many have i asked',
+                'what was my first question', 'what was my last question',
+                'previous question', 'last question', 'first question',
+                'what have we discussed', 'what did we discuss', 'conversation summary',
+                'what have we talked about', 'what topics have we covered',
+                'summarize our conversation', 'what was my previous question'
+            ]
+            
+            question_lower = user_question.lower().strip()
+            is_memory_question = any(indicator in question_lower for indicator in memory_indicators)
+            
+            print(f"🧠 Memory question detection: {is_memory_question}")
+            if is_memory_question:
+                print(f"✅ DETECTED MEMORY QUESTION: '{user_question}'")
+                for indicator in memory_indicators:
+                    if indicator in question_lower:
+                        print(f"   🎯 Matched indicator: '{indicator}'")
+                        break
+            
+            # STEP 3: Route to Memory System (supabase_faq_system)
+            if is_memory_question and supabase_faq_system:
+                print(f"🧠 === SUPABASE MEMORY SYSTEM PROCESSING ===")
+                print(f"🔧 Using OptimalChatbotFAQ with memory analysis")
+                
+                try:
+                    # Use the Supabase memory system (OptimalChatbotFAQ)
+                    memory_result = supabase_faq_system.ask_question(
+                        question=user_question,
+                        user_id=user_id,
+                        session_id=session_id
+                    )
+                    
+                    print(f"📤 Memory system result: {memory_result.get('success', False)}")
+                    print(f"🧠 Intent: {memory_result.get('intent', 'unknown')}")
+                    print(f"📝 Response preview: {str(memory_result.get('response', ''))[:100]}...")
+                    
+                    if memory_result['success']:
+                        # Enhanced response for memory questions
+                        response_data = {
+                            'success': True,
+                            'response': memory_result['response'],
+                            'system_used': 'supabase_memory_system',  # Clear identification
+                            'capabilities': 'Memory Analysis & Conversation History',
+                            'sources': ['Conversation History', 'Session Memory'],
+                            'sources_count': 2,
+                            'suggested_questions': memory_result.get('suggested_questions', [
+                                "What was my first question?",
+                                "How many questions have I asked?",
+                                "What have we discussed?",
+                                "What was my previous question?"
+                            ]),
+                            'processing_time': memory_result.get('processing_time', 0),
+                            'session_id': session_id,
+                            'categories': ['memory_analysis', 'conversation_history'],
+                            'memory_enabled': True,
+                            'intent': memory_result.get('intent', 'memory_question'),
+                            'conversation_history_used': memory_result.get('conversation_history_used', True),
+                            'enhanced_with_context': memory_result.get('enhanced_with_context', True)
+                        }
+                        
+                        print(f"✅ MEMORY SYSTEM SUCCESS - Response ready")
+                        print(f"📊 Memory response data keys: {list(response_data.keys())}")
+                        return jsonify(response_data)
+                    else:
+                        print(f"❌ Memory system failed: {memory_result.get('error', 'Unknown error')}")
+                        print(f"🔄 Falling back to regular FAQ system")
+                        
+                except Exception as memory_error:
+                    print(f"💥 MEMORY SYSTEM ERROR: {memory_error}")
+                    import traceback
+                    traceback.print_exc()
+                    print(f"🔄 Falling back to regular FAQ system")
+            
+            elif is_memory_question and not supabase_faq_system:
+                print(f"⚠️ Memory question detected but supabase_faq_system is None")
+                print(f"🔄 Processing as regular FAQ")
+            
+            # STEP 4: Regular FAQ System Processing (LOWEST PRIORITY)
+            print(f"📋 === REGULAR FAQ SYSTEM PROCESSING ===")
+            
+            # Get conversation history for context
             conversation_history = get_conversation_history(session_id)
+            print(f"📚 Conversation history: {len(conversation_history)} messages")
             
             # Use your existing FAQ system logic
-            print("Processing as FAQ question with enhanced LLM system")
-            result = llm_powered_faq_system.get_smart_response(user_question, conversation_history)  # FIXED: was 'enhanced_llm_faq_system'
+            print(f"🔍 Processing with enhanced LLM system")
+            result = llm_powered_faq_system.get_smart_response(user_question, conversation_history)
+            
+            print(f"📤 FAQ system response received")
+            print(f"📝 Response preview: {str(result.get('response', ''))[:100]}...")
             
             # Store messages
             store_message(session_id, user_question, 'human', user_id)
             store_message(session_id, result['response'], 'ai', user_id)
             
-            # FIXED: Apply convert_numpy_types to handle float32 serialization
+            # Enhanced source attribution for FAQ system
+            sources = result.get('sources', [])
+            
+            # Add appropriate sources based on system used
+            if result.get('llm_knowledge_used'):
+                if not any('AI Assistant' in str(s) for s in sources):
+                    sources.append('AI Assistant Knowledge')
+                    print(f"🤖 Added AI Assistant source")
+            
+            if result.get('num_sources', 0) > 0:
+                if not any('FAQ' in str(s) for s in sources):
+                    sources.append('Tiger Securities FAQ Database')
+                    print(f"📋 Added FAQ Database source")
+            
+            # Ensure we always have some source attribution
+            if not sources:
+                sources = ['Tiger Securities Knowledge Base']
+                print(f"📖 Added default Knowledge Base source")
+            
+            print(f"📚 Final FAQ sources: {sources}")
+            
+            # Prepare response data
             response_data = {
                 'success': True,
                 'response': result['response'],
-                'agent_type': 'faq_system',
+                'system_used': 'enhanced_llm_faq_system',
+                'capabilities': 'FAQ Search & LLM Intelligence',
+                'sources': sources,
+                'sources_count': len(sources),
                 'num_sources': result.get('num_sources', 0),
-                'sources': result.get('sources', []),
                 'suggested_questions': result.get('suggested_questions', []),
                 'processing_time': result.get('processing_time', 0),
                 'session_id': session_id,
                 'source_attribution': result.get('source_attribution', 'AI Assistant'),
-                'categories_used': result.get('categories_used', [])
+                'categories': result.get('categories_used', ['general']),
+                'llm_knowledge_used': result.get('llm_knowledge_used', False)
             }
         
             # Convert numpy types to JSON-serializable types
             response_data = convert_numpy_types(response_data)
-                
+            
+            print(f"✅ FAQ SYSTEM SUCCESS - Response ready")
+            print(f"📊 Response data keys: {list(response_data.keys())}")
             return jsonify(response_data)
             
     except Exception as e:
+        print(f"💥 CRITICAL ERROR in /api/ask: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
         logger.error(f"Error processing question: {str(e)}")
         return jsonify({
             'success': False,
             'error': f'Processing error: {str(e)}',
+            'sources': ['Error Handler'],
+            'sources_count': 1,
             'fallback_response': 'I apologize for the technical difficulty. Please try rephrasing your question.'
         }), 500
-
+    
 @app.route('/api/test-market-agent', methods=['POST'])
 def test_market_agent():
     """
@@ -566,7 +818,7 @@ def get_market_agent_stats():
     Get market agent statistics and capabilities
     """
     try:
-        if faq_market_agent:  # FIXED: was 'market_agent'
+        if faq_market_agent: 
             stats = faq_market_agent.get_faq_system_stats()
             return jsonify({
                 'success': True,
@@ -592,6 +844,82 @@ def get_market_agent_stats():
             'success': False,
             'error': str(e)
         }), 500
+    
+@app.route('/api/market-agent-status')
+def check_market_agent_status():
+    """Quick check of market agent availability and functionality"""
+    
+    status = {
+        'faq_market_agent_available': faq_market_agent is not None,
+        'can_process_questions': False,
+        'last_test_result': None,
+        'error': None
+    }
+    
+    if faq_market_agent:
+        try:
+            # Quick test
+            test_result = faq_market_agent.ask_question("Test market agent")
+            status['can_process_questions'] = test_result.get('success', False)
+            status['last_test_result'] = test_result.get('success', False)
+        except Exception as e:
+            status['error'] = str(e)
+    
+    return jsonify(status)
+
+@app.route('/api/debug-routing')
+def debug_routing():
+    """Enhanced debug endpoint to test specific queries"""
+    
+    test_queries = [
+        "What's the current market overview?",
+        "current market overview", 
+        "How is the market today?",
+        "Apple stock information",
+        "Tell me about Tesla",
+        "What about Microsoft stock?",
+        "How do I open an account?",  # Should be FAQ
+        "AAPL price",
+        "market status",
+        "S&P 500 performance"
+    ]
+    
+    results = []
+    
+    for query in test_queries:
+        should_use_market = should_use_market_agent(query)
+        results.append({
+            'query': query,
+            'should_use_market_agent': should_use_market,
+            'expected_agent': 'market_agent' if should_use_market else 'faq_system'
+        })
+    
+    return jsonify({
+        'test_results': results,
+        'summary': f"Tested {len(test_queries)} queries",
+        'market_queries': sum(1 for r in results if r['should_use_market_agent']),
+        'faq_queries': sum(1 for r in results if not r['should_use_market_agent'])
+    })
+
+@app.route('/api/test-specific-query')
+def test_specific_query():
+    """Test the exact query the user asked about"""
+    
+    query = "What's the current market overview?"
+    
+    should_use_market = should_use_market_agent(query)
+    
+    return jsonify({
+        'query': query,
+        'should_use_market_agent': should_use_market,
+        'expected_response': 'Real-time market data from Market Agent' if should_use_market else 'Generic info from FAQ System',
+        'debug_info': {
+            'query_lowercase': query.lower(),
+            'contains_market_overview': 'market overview' in query.lower(),
+            'contains_current': 'current' in query.lower(),
+            'routing_decision': 'MARKET AGENT' if should_use_market else 'FAQ SYSTEM'
+        }
+    })
 
 @app.route('/api/stats')
 def get_stats():
@@ -1046,6 +1374,63 @@ def get_session_feedback_summary(session_id):
             'success': False, 
             'error': 'Failed to get session feedback summary'
         }), 500
+
+@app.route('/api/test-memory-routing', methods=['POST'])
+def test_memory_routing():
+    """Test memory question routing specifically"""
+    try:
+        data = request.get_json()
+        question = data.get('question', 'What did I just ask?')
+        
+        # Test memory detection
+        memory_indicators = [
+            'what did i just ask', 'what did i ask', 'what was my question',
+            'how many questions', 'question count', 'how many have i asked',
+            'what was my first question', 'what was my last question',
+            'previous question', 'last question', 'first question',
+            'what have we discussed', 'what did we discuss', 'conversation summary'
+        ]
+        
+        question_lower = question.lower().strip()
+        is_memory_question = any(indicator in question_lower for indicator in memory_indicators)
+        
+        matched_indicators = [indicator for indicator in memory_indicators if indicator in question_lower]
+        
+        return jsonify({
+            'success': True,
+            'question': question,
+            'question_lower': question_lower,
+            'is_memory_question': is_memory_question,
+            'matched_indicators': matched_indicators,
+            'supabase_faq_system_available': supabase_faq_system is not None,
+            'memory_enabled': supabase_faq_system.memory_enabled if supabase_faq_system else False,
+            'routing_decision': 'memory_system' if is_memory_question and supabase_faq_system else 'faq_system'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.route('/api/system-status')
+def system_status():
+    """Get status of all available systems"""
+    return jsonify({
+        'market_agent': {
+            'available': faq_market_agent is not None,
+            'type': 'FAQMarketAgent'
+        },
+        'memory_system': {
+            'available': supabase_faq_system is not None,
+            'memory_enabled': supabase_faq_system.memory_enabled if supabase_faq_system else False,
+            'type': 'OptimalChatbotFAQ'
+        },
+        'faq_system': {
+            'available': llm_powered_faq_system is not None,
+            'type': 'LLMPoweredOptimizedFAQSystem'
+        }
+    })
 
 @app.route('/ws')
 def websocket_endpoint():
