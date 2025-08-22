@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiger Securities AI-Powered FAQ System Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #1a1a1a;
+            color: #333;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .architecture-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+        
+        /* Layer Styles */
+        .layer {
+            margin-bottom: 30px;
+            background: #ffc107;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .layer-title {
+            background: #333;
+            color: #ffc107;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: inline-block;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .layer-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* UI Layer */
+        .ui-features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .feature {
+            background: #fff9e6;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Routing Engine */
+        .routing-box {
+            background: #333;
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .routing-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .routing-feature {
+            background: #ffc107;
+            color: #333;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        /* Systems Grid */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .system-card {
+            background: white;
+            border: 3px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .system-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .system-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .system-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .system-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .system-tech {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+        
+        /* Foundation Layer */
+        .foundation-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .foundation-item {
+            background: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .foundation-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #ffc107;
+        }
+        
+        .foundation-features {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Flow Diagram */
+        .flow-section {
+            margin-top: 40px;
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 16px;
+        }
+        
+        .flow-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .flow-step {
+            background: #ffc107;
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #666;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        /* Performance Metrics */
+        .metrics-section {
+            margin-top: 40px;
+            background: #333;
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+        }
+        
+        .metrics-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #ffc107;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+        
+        .metric-item {
+            background: #444;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #ffc107;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 16px;
+            color: #ccc;
+        }
+        
+        /* Arrow styles */
+        .arrow-down {
+            text-align: center;
+            font-size: 30px;
+            color: #ffc107;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="architecture-container">
+        <h1>Tiger Securities AI-Powered FAQ System Architecture</h1>
+        
+        <!-- User Interface Layer -->
+        <div class="layer">
+            <div class="layer-title">🌟 USER INTERFACE LAYER 🌟</div>
+            <div class="layer-content">
+                <h3 style="text-align: center; margin-bottom: 20px;">REACT CHAT APPLICATION</h3>
+                <div class="ui-features">
+                    <div class="feature">▣ Real-time Messaging</div>
+                    <div class="feature">▣ Dark/Light Mode</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow-down">⬇</div>
+        
+        <!-- Intelligent Routing Engine -->
+        <div class="layer">
+            <div class="layer-title">⚡ INTELLIGENT ROUTING ENGINE ⚡</div>
+            <div class="layer-content">
+                <div class="routing-box">
+                    <h3 style="color: #ffc107; margin-bottom: 20px;">FLASK API GATEWAY SERVER</h3>
+                    <h4 style="margin-bottom: 15px;">QUESTION INTENT ANALYZER</h4>
+                    <div class="routing-features">
+                        <div class="routing-feature">◆ Pattern Recognition</div>
+                        <div class="routing-feature">◆ Context Analysis</div>
+                        <div class="routing-feature">◆ Smart Routing</div>
+                        <div class="routing-feature">◆ Session Management</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow-down">⬇</div>
+        
+        <!-- AI Systems -->
+        <div class="layer">
+            <div class="layer-title">🤖 SPECIALIZED AI SYSTEMS 🤖</div>
+            <div class="layer-content">
+                <div class="systems-grid">
+                    <div class="system-card">
+                        <div class="system-icon">📚</div>
+                        <div class="system-name">FAQ SYSTEM</div>
+                        <div class="system-desc">Vector Search + GPT-4</div>
+                        <div class="system-tech">FAISS + OpenAI</div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-icon">📈</div>
+                        <div class="system-name">MARKET AGENT</div>
+                        <div class="system-desc">Stock Prices + News</div>
+                        <div class="system-tech">Yahoo Finance API</div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-icon">💾</div>
+                        <div class="system-name">MEMORY SYSTEM</div>
+                        <div class="system-desc">Chat History + Context</div>
+                        <div class="system-tech">Supabase PostgreSQL</div>
+                    </div>
+                    
+                    <div class="system-card">
+                        <div class="system-icon">🔄</div>
+                        <div class="system-name">FALLBACK HANDLER</div>
+                        <div class="system-desc">General LLM Response</div>
+                        <div class="system-tech">GPT-4 Direct</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow-down">⬇</div>
+        
+        <!-- AI & Data Foundation -->
+        <div class="layer">
+            <div class="layer-title">🔧 AI & DATA FOUNDATION 🔧</div>
+            <div class="layer-content">
+                <div class="foundation-grid">
+                    <div class="foundation-item">
+                        <div class="foundation-title">OPENAI GPT-4</div>
+                        <div class="foundation-features">
+                            ▪ Language Understanding<br>
+                            ▪ Context Analysis<br>
+                            ▪ Response Generation
+                        </div>
+                    </div>
+                    
+                    <div class="foundation-item">
+                        <div class="foundation-title">FAISS VECTOR DB</div>
+                        <div class="foundation-features">
+                            ▪ 128+ FAQs<br>
+                            ▪ Fast Search<br>
+                            ▪ Embeddings Storage
+                        </div>
+                    </div>
+                    
+                    <div class="foundation-item">
+                        <div class="foundation-title">YAHOO FINANCE</div>
+                        <div class="foundation-features">
+                            ▪ Live Stock Data<br>
+                            ▪ Market News<br>
+                            ▪ Financial APIs
+                        </div>
+                    </div>
+                    
+                    <div class="foundation-item">
+                        <div class="foundation-title">SUPABASE</div>
+                        <div class="foundation-features">
+                            ▪ Session Management<br>
+                            ▪ Chat History<br>
+                            ▪ User Feedback
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Request Flow -->
+        <div class="flow-section">
+            <h2 class="flow-title">Request Processing Pipeline</h2>
+            <div class="flow-steps">
+                <div class="flow-step">USER<br>QUESTION</div>
+                <div class="flow-step">ANALYZE<br>INTENT</div>
+                <div class="flow-step">ROUTE TO<br>SYSTEM</div>
+                <div class="flow-step">AI<br>PROCESSING</div>
+                <div class="flow-step">FORMAT<br>RESPONSE</div>
+                <div class="flow-step">DELIVER<br>TO USER</div>
+            </div>
+        </div>
+        
+        <!-- Performance Metrics -->
+        <div class="metrics-section">
+            <h2 class="metrics-title">System Capabilities</h2>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value">3-5s</div>
+                    <div class="metric-label">Response Time</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">128+</div>
+                    <div class="metric-label">FAQ Entries</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">95%+</div>
+                    <div class="metric-label">Accuracy on FAQs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Routing Engine</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+        }
+        
+        h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #333;
+        }
+        
+        /* Routing Examples Styles */
+        .routing-example {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .question-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+        
+        .routing-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .detect-box {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .category-box {
+            flex: 1;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #856404;
+        }
+        
+        .route-box {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .arrow {
+            color: #999;
+            font-size: 20px;
+            margin: 0 10px;
+        }
+        
+        .result-box {
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-box.faq {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+        
+        .result-box.market {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            color: #e65100;
+        }
+        
+        .result-box.memory {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            color: #6a1b9a;
+        }
+        
+        .result-box.fallback {
+            background: #e8eaf6;
+            border-left: 4px solid #3f51b5;
+            color: #283593;
+        }
+        
+        .checkmark {
+            color: inherit;
+            font-size: 20px;
+        }
+        
+        /* Decision Tree Styles */
+        .decision-tree {
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .tree-node {
+            display: inline-block;
+            background: #ffc107;
+            color: #333;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 10px;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+        
+        .tree-node.root {
+            background: #2196f3;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .tree-node.faq {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .tree-node.market {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .tree-node.memory {
+            background: #9c27b0;
+            color: white;
+        }
+        
+        .tree-node.fallback {
+            background: #3f51b5;
+            color: white;
+        }
+        
+        .tree-branches {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 30px;
+            gap: 40px;
+        }
+        
+        .tree-branch {
+            text-align: center;
+        }
+        
+        .pattern-desc {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .tree-line {
+            width: 2px;
+            height: 30px;
+            background: #ccc;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Real-Time Routing Examples</h2>
+        
+        <!-- Example 1: FAQ -->
+        <div class="routing-example">
+            <div class="question-box">
+                "What are the trading fees?"
+            </div>
+            <div class="routing-flow">
+                <div class="detect-box">Detect: "fees"</div>
+                <span class="arrow">→</span>
+                <div class="category-box">Category: FAQ</div>
+                <span class="arrow">→</span>
+                <div class="route-box">Route: FAQ System</div>
+            </div>
+            <div class="result-box faq">
+                <span class="checkmark">✓</span>
+                <span>FAQ System searches 128+ entries for accurate fee information</span>
+            </div>
+        </div>
+        
+        <!-- Example 2: Market -->
+        <div class="routing-example">
+            <div class="question-box">
+                "What's Apple's current stock price?"
+            </div>
+            <div class="routing-flow">
+                <div class="detect-box">Detect: "current",<br>"price"</div>
+                <span class="arrow">→</span>
+                <div class="category-box">Category: Market</div>
+                <span class="arrow">→</span>
+                <div class="route-box">Route: Market<br>Agent</div>
+            </div>
+            <div class="result-box market">
+                <span class="checkmark">✓</span>
+                <span>Market Agent fetches real-time data from Yahoo Finance</span>
+            </div>
+        </div>
+        
+        <!-- Example 3: Memory -->
+        <div class="routing-example">
+            <div class="question-box">
+                "What was my previous question?"
+            </div>
+            <div class="routing-flow">
+                <div class="detect-box">Detect: "previous"</div>
+                <span class="arrow">→</span>
+                <div class="category-box">Category: Memory</div>
+                <span class="arrow">→</span>
+                <div class="route-box">Route: Memory<br>System</div>
+            </div>
+            <div class="result-box memory">
+                <span class="checkmark">✓</span>
+                <span>Memory System retrieves conversation history from Supabase</span>
+            </div>
+        </div>
+        
+        <!-- Example 4: Fallback -->
+        <div class="routing-example">
+            <div class="question-box">
+                "Write a haiku about trading"
+            </div>
+            <div class="routing-flow">
+                <div class="detect-box">Detect: No pattern<br>match</div>
+                <span class="arrow">→</span>
+                <div class="category-box">Category: General</div>
+                <span class="arrow">→</span>
+                <div class="route-box">Route: Fallback<br>Handler</div>
+            </div>
+            <div class="result-box fallback">
+                <span class="checkmark">✓</span>
+                <span>GPT-4 generates creative response for unexpected questions</span>
+            </div>
+        </div>
+        
+        <!-- Decision Tree -->
+        <div class="decision-tree">
+            <h2>Intelligent Decision Tree</h2>
+            
+            <div class="tree-node root">User Question</div>
+            
+            <div class="tree-line"></div>
+            
+            <div class="tree-node">Intent Analysis</div>
+            
+            <div class="tree-branches">
+                <div class="tree-branch">
+                    <div class="pattern-desc">fees, account,<br>trading, how</div>
+                    <div class="tree-node faq">FAQ Pattern</div>
+                    <div class="tree-line"></div>
+                    <div class="tree-node faq">FAQ System</div>
+                </div>
+                
+                <div class="tree-branch">
+                    <div class="pattern-desc">price, stock,<br>current, market</div>
+                    <div class="tree-node market">Market Pattern</div>
+                    <div class="tree-line"></div>
+                    <div class="tree-node market">Market Agent</div>
+                </div>
+                
+                <div class="tree-branch">
+                    <div class="pattern-desc">previous, asked,<br>history, discussed</div>
+                    <div class="tree-node memory">Memory Pattern</div>
+                    <div class="tree-line"></div>
+                    <div class="tree-node memory">Memory System</div>
+                </div>
+                
+                <div class="tree-branch">
+                    <div class="pattern-desc">no pattern<br>match</div>
+                    <div class="tree-node fallback">Fallback</div>
+                    <div class="tree-line"></div>
+                    <div class="tree-node fallback">GPT-4 Direct</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
