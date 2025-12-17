@@ -57,6 +57,40 @@ TigerGPT is a production-ready AI assistant that helps TradeUP customers get ins
 
 ---
 
+## How It Works
+
+```
+User: "What's Apple's stock price and what are the trading fees?"
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │  Intent Router  │  ← GPT analyzes query
+                    │   (LLM-based)   │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+      ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+      │Market Agent │ │ FAQ System  │ │   Memory    │
+      │(AAPL price) │ │(trading fee)│ │  (context)  │
+      └──────┬──────┘ └──────┬──────┘ └──────┬──────┘
+             │               │               │
+             └───────────────┴───────────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │  GPT Response   │  ← Combines all sources
+                    │   Generation    │
+                    └────────┬────────┘
+                             │
+                             ▼
+User: "Apple (AAPL) is currently trading at $178.52 (+1.2%).
+       Regarding trading fees, TradeUP offers commission-free
+       trading for US stocks..."
+```
+
+---
+
 ## Features
 
 ### 1. Intelligent Question Routing
@@ -72,30 +106,36 @@ The system automatically detects question intent and routes to the appropriate h
 
 ### 2. Semantic FAQ Search
 
-- **128+ Q&A pairs** across 16 categories
-- **FAISS vector database** for fast similarity search
-- **OpenAI embeddings** for semantic understanding
-- Falls back to GPT knowledge when FAQ doesn't match
+- **128+ Q&A pairs** across 16 categories (Account Opening, Fees, Transfers, Trading Rules, etc.)
+- **FAISS vector database** for fast similarity search (~300ms retrieval)
+- **OpenAI text-embedding-ada-002** for semantic understanding
+- **Relevance scoring** with configurable similarity thresholds
+- Falls back to GPT knowledge when FAQ doesn't match (with disclaimer)
 
 ### 3. Real-Time Market Data
 
-- Live stock quotes and daily changes
-- Market overview (S&P 500, NASDAQ, Dow Jones)
-- Company news and information
-- Powered by Yahoo Finance API
+- **Live stock quotes** with price, daily change, and percentage
+- **Market overview** for major indices (S&P 500, NASDAQ, Dow Jones)
+- **Company information** including sector, market cap, and description
+- **Natural language queries**: "How is Tesla doing?" → parsed and fetched automatically
+- Powered by Yahoo Finance API via LangChain agent with tool-calling
 
 ### 4. Conversation Memory
 
-- Session-based chat history stored in Supabase
-- Context-aware follow-up responses
-- Memory queries: "How many questions did I ask?"
-- User identity persists via browser cookies
+- **Session-based chat history** stored in Supabase PostgreSQL
+- **Context-aware follow-ups**: "Tell me more about that" works correctly
+- **Memory queries**: "How many questions did I ask?" / "What did we discuss?"
+- **Configurable memory window** (default: last 10 messages for context)
+- **User identity persistence** via secure browser cookies (UUID-based)
+- **Cross-restart persistence**: Sessions survive server restarts
 
 ### 5. User Feedback System
 
-- Thumbs up/down on every response
-- Satisfaction analytics dashboard
-- Helps identify areas for improvement
+- **Thumbs up/down** on every AI response
+- **Feedback analytics** with satisfaction rates and trends
+- **Question-level tracking**: See which questions get negative feedback
+- **Category analysis**: Identify weak areas in FAQ coverage
+- Helps identify areas for improvement and retraining priorities
 
 ---
 
@@ -377,12 +417,114 @@ curl -X POST http://localhost:8000/api/ask \
 
 ---
 
+## Security Considerations
+
+### Data Protection
+
+| Layer | Implementation |
+|-------|----------------|
+| **API Keys** | Stored in environment variables, never committed to git |
+| **User Sessions** | UUID-based session IDs, no PII in cookies |
+| **Database** | Row Level Security (RLS) enabled on Supabase tables |
+| **Input Validation** | All user inputs sanitized before processing |
+| **CORS** | Configured to allow only trusted origins |
+
+### Financial Data Compliance
+
+- **No Trading Execution**: System provides information only, never executes trades
+- **Real-time Disclaimers**: Market data includes timestamps and source attribution
+- **FAQ Grounding**: Responses cite official TradeUP documentation to prevent misinformation
+- **Audit Trail**: All conversations logged with timestamps for compliance review
+
+### Production Hardening Checklist
+
+```
+[x] Environment variables for all secrets
+[x] Input sanitization on all endpoints
+[x] Rate limiting via Flask-Limiter (configurable)
+[x] HTTPS enforcement in production
+[x] Database connection pooling
+[ ] JWT authentication (future)
+[ ] API key rotation automation (future)
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Problem | Cause | Solution |
+|---------|-------|----------|
+| `ModuleNotFoundError: supabase` | Wrong Python environment | Use `myenv_311/bin/python` or reinstall dependencies |
+| Slow first response (10+ sec) | Cold start - models loading | Normal on first request; subsequent requests are faster |
+| `OPENAI_API_KEY not found` | Environment not loaded | Check `notepad.env` exists and path is correct in `app.py` |
+| CORS errors in browser | Frontend/backend port mismatch | Ensure frontend calls `localhost:8000` for API |
+| Empty FAQ results | Vector index not built | Run `python scripts/indexing.py` to rebuild FAISS index |
+
+### Debug Mode
+
+Enable detailed logging:
+```python
+# In backend/app.py
+app.run(debug=True, host='0.0.0.0', port=8000)
+```
+
+### Health Check
+
+Verify system status:
+```bash
+# Check if backend is running
+curl http://localhost:8000/health
+
+# Expected response:
+{
+  "status": "healthy",
+  "faq_system": "loaded",
+  "market_agent": "loaded",
+  "memory_system": "connected"
+}
+```
+
+### Logs to Check
+
+| Log Location | What It Shows |
+|--------------|---------------|
+| Terminal (backend) | API requests, errors, response times |
+| Browser Console | Frontend errors, API call failures |
+| Supabase Dashboard | Database queries, RLS policy violations |
+| OpenAI Dashboard | API usage, rate limits, costs |
+
+---
+
+## Environment Variables
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `OPENAI_API_KEY` | OpenAI API key for GPT and embeddings | Yes | `sk-proj-...` |
+| `SUPABASE_URL` | Supabase project URL | Yes | `https://xxx.supabase.co` |
+| `SUPABASE_ANON_KEY` | Supabase anonymous/public key | Yes | `eyJhbGc...` |
+| `SECRET_KEY` | Flask session encryption key | Yes | Random 32+ char string |
+
+---
+
 ## Future Improvements
 
-1. **Long-term Memory** - RAG-based cross-session context retrieval
-2. **Scalability** - Request queuing, API key rotation, Redis caching
-3. **Deployment** - Vercel (frontend) + Render (backend)
-4. **Analytics Dashboard** - Admin panel for monitoring usage
+### Short-term
+- **Multi-turn Conversation** - Better handling of follow-up questions with coreference resolution
+- **Response Streaming** - Stream GPT responses token-by-token for perceived faster UX
+- **Suggested Questions** - Context-aware question suggestions based on conversation history
+
+### Medium-term
+- **Long-term Memory** - RAG-based cross-session context retrieval ("Remember I asked about fees last week")
+- **Admin Dashboard** - Real-time analytics, feedback review, FAQ management UI
+- **Multi-language Enhancement** - Improved Chinese language support with dedicated prompts
+
+### Long-term
+- **Production Deployment** - Vercel (frontend) + Render/Railway (backend) with CI/CD
+- **Scalability** - Request queuing, API key rotation, Redis caching for high traffic
+- **Voice Interface** - Speech-to-text input for accessibility
+- **Custom Fine-tuning** - Fine-tuned model on TradeUP-specific terminology
 
 ---
 
