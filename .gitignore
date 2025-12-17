@@ -1,0 +1,43 @@
+# Virtual environments
+myenv/
+myenv_311/
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Environment files
+.env
+*.env
+!notepad.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Logs
+*.log
+
+# Local config
+.claude/
+*.pdf
